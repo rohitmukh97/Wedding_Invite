@@ -48,6 +48,7 @@
   --glow:rgba(157,15,24,.3);
   --shadow:rgba(38,18,15,.16);
   --band-a:#5e0d18; --band-b:#9d0f18;
+  --rose-a:201,60,80; --rose-b:214,92,110; --rose-k:1;
 }
 [data-theme="dark"]{
   --bg:#190d0e; --bg-2:#21110f; --bg-3:#291614;
@@ -59,6 +60,7 @@
   --glow:rgba(232,128,123,.28);
   --shadow:rgba(0,0,0,.55);
   --band-a:#451215; --band-b:#7d2b28;
+  --rose-a:228,104,118; --rose-b:240,138,152; --rose-k:1.5;
 }
 /* ---------- PALETTE B: Premium Mauve ---------- */
 [data-palette="mauve"]{
@@ -71,6 +73,7 @@
   --glow:rgba(142,110,150,.26);
   --shadow:rgba(42,32,41,.14);
   --band-a:#43213f; --band-b:#8e6e96;
+  --rose-a:150,96,160; --rose-b:178,126,184; --rose-k:1;
 }
 [data-palette="mauve"][data-theme="dark"]{
   --bg:#17101a; --bg-2:#1d1522; --bg-3:#231829;
@@ -82,6 +85,7 @@
   --glow:rgba(201,162,208,.24);
   --shadow:rgba(0,0,0,.5);
   --band-a:#2c1930; --band-b:#5c3f63;
+  --rose-a:190,134,200; --rose-b:208,160,216; --rose-k:1.5;
 }
 
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -320,6 +324,116 @@ html[data-lang="bn"] .intro-hint{font-family:'Hind Siliguri',sans-serif;font-sty
    All CSS and inline SVG. No libraries.
    ========================================================= */
 .scene{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+
+/* =========================================================
+   INTRO BACKGROUND - reddish-pink, behind everything.
+   Every keyframe animates transform or opacity only, so these
+   stay on the compositor. The one exception is the vine, which
+   animates stroke-dashoffset, and there are only two of those.
+   ========================================================= */
+.intro-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+
+/* 1. drifting orbs - a living colour bed.
+   Soft-stopped gradients, not filter:blur(), which is expensive on old phones. */
+.orb{position:absolute;border-radius:50%;will-change:transform}
+.orb-1{
+  width:64vw;height:64vw;top:-10%;left:-16%;
+  background:radial-gradient(circle,rgba(var(--rose-a),calc(.20 * var(--rose-k))),rgba(var(--rose-a),calc(.09 * var(--rose-k))) 46%,transparent 72%);
+  animation:orbDrift 30s ease-in-out infinite;
+}
+.orb-2{
+  width:56vw;height:56vw;bottom:1%;right:-18%;
+  background:radial-gradient(circle,rgba(var(--rose-b),calc(.19 * var(--rose-k))),rgba(var(--rose-b),calc(.07 * var(--rose-k))) 46%,transparent 72%);
+  animation:orbDrift 37s ease-in-out infinite;animation-delay:-11s;
+}
+.orb-3{
+  width:48vw;height:48vw;top:40%;left:50%;
+  background:radial-gradient(circle,rgba(var(--rose-a),calc(.14 * var(--rose-k))),transparent 70%);
+  animation:orbDrift 43s ease-in-out infinite;animation-delay:-21s;
+}
+@keyframes orbDrift{
+  0%,100%{transform:translate(0,0) scale(1)}
+  33%{transform:translate(6vw,-5vh) scale(1.13)}
+  66%{transform:translate(-5vw,5vh) scale(.93)}
+}
+
+/* 2. rings swelling out from behind the monogram */
+.pulse{
+  position:absolute;top:44%;left:50%;
+  width:min(300px,74vw);aspect-ratio:1;border-radius:50%;
+  border:1.5px solid rgba(var(--rose-a),.5);
+  transform:translate(-50%,-50%) scale(.25);opacity:0;
+  animation:pulseOut 7.5s cubic-bezier(.2,.6,.3,1) infinite;
+}
+.pulse-2{animation-delay:2.5s}
+.pulse-3{animation-delay:5s}
+@keyframes pulseOut{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.25)}
+  14%{opacity:.42}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(2.5)}
+}
+
+/* 3. silk sheen - an occasional sweep, not a perpetual animation */
+.silk{
+  position:absolute;top:-30%;left:-65%;width:58%;height:180%;
+  background:linear-gradient(105deg,transparent,
+    rgba(var(--rose-b),calc(.13 * var(--rose-k))) 40%,
+    rgba(255,235,240,calc(.20 * var(--rose-k))) 50%,
+    rgba(var(--rose-b),calc(.13 * var(--rose-k))) 60%,transparent);
+  animation:silkSweep 12s ease-in-out infinite;will-change:transform;
+}
+@keyframes silkSweep{
+  0%{transform:translateX(0) rotate(11deg);opacity:0}
+  9%{opacity:1}
+  56%{opacity:1}
+  72%,100%{transform:translateX(300%) rotate(11deg);opacity:0}
+}
+
+/* 4. sindoor dust, drifting up against the falling flowers */
+.dust{
+  position:absolute;bottom:-6%;border-radius:50%;opacity:0;
+  animation-name:dustRise;animation-timing-function:linear;animation-iteration-count:infinite;
+  will-change:transform;
+}
+@keyframes dustRise{
+  0%{opacity:0;transform:translate3d(0,0,0)}
+  14%{opacity:.5}
+  86%{opacity:.3}
+  100%{opacity:0;transform:translate3d(20px,-108vh,0)}
+}
+
+/* 5. jaba blooming and fading */
+.bloom{position:absolute;width:66px;opacity:0;animation:bloomIn 13s ease-in-out infinite}
+.bloom-1{top:22%;left:7%}
+.bloom-2{top:58%;right:8%;animation-delay:-4.4s}
+.bloom-3{top:78%;left:16%;animation-delay:-8.8s}
+@keyframes bloomIn{
+  0%,100%{opacity:0;transform:scale(.5) rotate(-12deg)}
+  12%{opacity:.3;transform:scale(1) rotate(0)}
+  30%{opacity:.3}
+  46%{opacity:0;transform:scale(1.18) rotate(9deg)}
+}
+
+/* 6. alpona vines creeping in along the edges, then erasing */
+.vine{position:absolute;top:0;height:100%;width:82px;color:rgba(var(--rose-a),.26)}
+.vine-l{left:0}
+.vine-r{right:0;transform:scaleX(-1)}
+.vine svg{width:100%;height:100%}
+.vine path{
+  stroke-dasharray:1500;stroke-dashoffset:1500;
+  animation:vineGrow 22s ease-in-out infinite;
+}
+.vine-r path{animation-delay:-8s}
+@keyframes vineGrow{
+  0%{stroke-dashoffset:1500}
+  42%,66%{stroke-dashoffset:0}
+  100%{stroke-dashoffset:-1500}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .orb,.pulse,.silk,.dust,.bloom,.vine path{animation:none}
+  .pulse,.silk,.dust{opacity:0}
+}
 
 /* --- garad bands framing the intro, same border as the invitation --- */
 .intro-band{position:absolute;left:0;right:0;z-index:3}
@@ -766,6 +880,47 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
      INTRO
      ========================================================= -->
 <div id="intro">
+
+  <!-- ===== reddish-pink background, behind everything ===== -->
+  <div class="intro-bg" id="introBg" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="pulse pulse-1"></div>
+    <div class="pulse pulse-2"></div>
+    <div class="pulse pulse-3"></div>
+
+    <div class="silk"></div>
+
+    <div class="vine vine-l">
+      <svg viewBox="0 0 82 900" preserveAspectRatio="none">
+        <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <path d="M8 900 C34 820 4 740 26 660 C46 586 10 512 30 436 C48 366 8 292 28 218 C44 158 14 92 30 20"/>
+          <path d="M26 660 C44 648 58 656 62 672"/>
+          <path d="M30 436 C48 424 62 432 66 448"/>
+          <path d="M28 218 C46 206 60 214 64 230"/>
+          <path d="M20 780 C36 770 50 778 54 792"/>
+          <path d="M30 20 C46 12 58 20 62 34"/>
+        </g>
+      </svg>
+    </div>
+    <div class="vine vine-r">
+      <svg viewBox="0 0 82 900" preserveAspectRatio="none">
+        <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <path d="M8 900 C34 824 4 744 26 664 C46 590 10 516 30 440 C48 370 8 296 28 222 C44 162 14 96 30 24"/>
+          <path d="M26 664 C44 652 58 660 62 676"/>
+          <path d="M30 440 C48 428 62 436 66 452"/>
+          <path d="M28 222 C46 210 60 218 64 234"/>
+          <path d="M20 784 C36 774 50 782 54 796"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="bloom bloom-1"></div>
+    <div class="bloom bloom-2"></div>
+    <div class="bloom bloom-3"></div>
+  </div>
 
   <!-- ===== Bengali scene ===== -->
   <div class="scene" aria-hidden="true">
@@ -1292,14 +1447,14 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
   var wash=document.getElementById('wash');
   var morphTimer=null,morphBusy=false;
   function morph(apply){
-    if(reduce){apply();paintPetals();return}
+    if(reduce){apply();paintPetals();paintIntroBg();return}
     if(morphBusy)return;
     morphBusy=true;
     root.classList.add('theming');
     wash.classList.add('on');
     setTimeout(function(){
       apply();
-      paintPetals();              /* repainted while the wash hides the swap */
+      paintPetals();paintIntroBg();              /* repainted while the wash hides the swap */
     },260);
     setTimeout(function(){wash.classList.remove('on')},760);
     clearTimeout(morphTimer);
@@ -1374,7 +1529,7 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
 
   each('[data-mode-btn]',function(btn){
     btn.addEventListener('click',function(){
-      if(reduce){applyMode();paintPetals();return}
+      if(reduce){applyMode();paintPetals();paintIntroBg();return}
       if(morphBusy)return;
       morphBusy=true;
 
@@ -1416,7 +1571,7 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       setTimeout(function(){
         root.classList.add('instant');
         applyMode();
-        paintPetals();
+        paintPetals();paintIntroBg();
         void document.body.offsetHeight;       /* commit before transitions return */
       },900);
       setTimeout(function(){spread.classList.add('clear')},1160);
@@ -1533,6 +1688,32 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     Array.prototype.forEach.call(vids,function(v){attach(v);v.setAttribute('controls','')});
   }
 
+  /* ---------- intro background: sindoor dust + jaba blooms ---------- */
+  function paintIntroBg(){
+    if(reduce)return;
+    var cs=getComputedStyle(root);
+    var rose=cs.getPropertyValue('--rose-a').trim();
+
+    /* sindoor dust rising against the falling flowers */
+    var bg=document.getElementById('introBg');
+    if(!bg)return;
+    Array.prototype.forEach.call(bg.querySelectorAll('.dust'),function(d){d.remove()});
+    for(var i=0;i<16;i++){
+      var d=document.createElement('div');
+      d.className='dust';
+      var s=1.5+Math.random()*3;
+      d.style.cssText='left:'+(Math.random()*100)+'%;width:'+s+'px;height:'+s+'px;'+
+        'background:rgba('+rose+','+(0.35+Math.random()*0.35).toFixed(2)+');'+
+        'animation-duration:'+(20+Math.random()*20)+'s;animation-delay:'+(Math.random()*26)+'s;';
+      bg.appendChild(d);
+    }
+
+    /* jaba opening and fading, reusing the same flower drawing */
+    Array.prototype.forEach.call(bg.querySelectorAll('.bloom'),function(b){
+      b.innerHTML=flower('jaba',cs);
+    });
+  }
+
   /* ---------- toran ----------
      Built at the real viewport width. A fixed viewBox stretched with
      preserveAspectRatio would squash the marigolds into ellipses on desktop. */
@@ -1628,7 +1809,7 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       box.appendChild(p);
     }
   }
-  paintPetals();
+  paintPetals();paintIntroBg();
 })();
 </script>
 </body>
