@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" data-lang="en" class="no-js">
 <script>
-/* Restore look before first paint so there is no flash.
-   Palette and dark mode persist. Language always starts in English. */
+/* The invitation is locked to the Bengali palette in dark mode, applied
+   before first paint so there is no flash. Nothing is read from storage:
+   every visit opens the same way, in English. */
 (function(){
-  var h=document.documentElement;
-  try{
-    if(localStorage.getItem('suro-palette')==='mauve')h.setAttribute('data-palette','mauve');
-    if(localStorage.getItem('suro-theme')==='dark')h.setAttribute('data-theme','dark');
-  }catch(e){}
+  document.documentElement.setAttribute('data-theme','dark');
 })();
 </script>
 <head>
@@ -226,8 +223,10 @@ html[data-lang="en"] .ctl-lang .glyph-en{opacity:0;transform:scale(.7)}
 
 .intro-alpona{
   position:absolute;top:50%;left:50%;
-  width:min(560px,124vw);aspect-ratio:1;
-  transform:translate(-50%,-62%);
+  /* size and position are set in JS: it is centred on the seal, and small
+     enough to sit between the Ganesha group above and the invite lines below,
+     so nothing but the seal falls inside the ring */
+  aspect-ratio:1;
   color:var(--gold);opacity:.42;pointer-events:none;
   -webkit-mask-image:radial-gradient(ellipse 62% 62% at 50% 46%,#000 55%,transparent 88%);
           mask-image:radial-gradient(ellipse 62% 62% at 50% 46%,#000 55%,transparent 88%);
@@ -260,11 +259,17 @@ html[data-lang="en"] .ctl-lang .glyph-en{opacity:0;transform:scale(.7)}
     0 0 6px var(--bg),0 0 6px var(--bg),0 0 10px var(--bg),
     0 0 16px var(--bg),0 0 26px var(--bg);
 }
+/* now part of the Ganesha group at the top of the screen */
 .intro-eyebrow{
   position:relative;z-index:2;
   font-size:10px;letter-spacing:.4em;text-transform:uppercase;
-  color:var(--ink-2);margin-bottom:6px;
+  color:var(--ink-2);margin:9px 0 0;
   animation:riseIn 1.1s ease-out both;
+}
+/* the invitation lines and the date, pinned to the lower part of the screen */
+.intro-lower{
+  position:absolute;left:0;right:0;bottom:116px;
+  z-index:2;text-align:center;
 }
 html[data-lang="bn"] .intro-eyebrow{letter-spacing:.1em;text-transform:none;font-size:13px}
 
@@ -292,10 +297,14 @@ html[data-lang="bn"] .intro-eyebrow{letter-spacing:.1em;text-transform:none;font
   border:1px solid rgba(255,236,196,.34);pointer-events:none;
 }
 .suro-text{
-  position:relative;
+  position:relative;display:inline-block;
   font-family:'Pinyon Script',cursive;
   font-size:clamp(26px,7vw,48px);line-height:1;
   letter-spacing:.01em;color:#f2dda2;
+  /* Pinyon Script's ink does not sit centred in its advance box - it rides
+     high. inline-block sorts the horizontal on its own; the vertical needs a
+     nudge. Measured on rendered pixels, in em so it scales with the clamp. */
+  transform:translate(-.04em,.055em);
 }
 @supports ((-webkit-background-clip:text) or (background-clip:text)){
   .suro-text{
@@ -345,8 +354,7 @@ html[data-lang="bn"] .intro-eyebrow{letter-spacing:.1em;text-transform:none;font
   position:relative;z-index:2;text-align:center;
   font-family:'Cormorant Garamond',serif;font-style:italic;
   font-size:clamp(19px,4.6vw,25px);color:var(--ink-2);
-  /* clears the seal AND the bangle ring, which extends below it */
-  margin-top:22px;
+  margin-top:0;
   animation:riseIn 1.3s ease-out .3s both;
 }
 html[data-lang="bn"] .intro-line{font-family:'Noto Serif Bengali',serif;font-style:normal;font-size:clamp(17px,4.2vw,21px)}
@@ -362,7 +370,7 @@ html[data-lang="bn"] .intro-date{letter-spacing:.06em;text-transform:none;font-s
   display:flex;align-items:center;justify-content:center;gap:7px;
   font-family:'Montserrat',sans-serif;font-size:11px;font-weight:400;
   letter-spacing:.2em;text-transform:uppercase;
-  color:var(--accent);margin-top:10px;
+  color:var(--accent);margin:0 0 16px;
   animation:riseIn 1.3s ease-out .55s both,bob 2.8s ease-in-out 2.2s infinite;
 }
 .intro-hint svg{width:13px;height:13px;flex:0 0 auto}
@@ -371,7 +379,15 @@ html[data-lang="bn"] .intro-hint{
   font-family:'Hind Siliguri',sans-serif;
   letter-spacing:.03em;text-transform:none;font-size:14px;
 }
-.intro-ctl{position:relative;z-index:2;margin-top:38px;animation:riseIn 1.3s ease-out .68s both}
+/* language sits alone at the very bottom, out of the vertical flow so the
+   rest of the intro can centre without it */
+/* Full width and centred by the flex row, not by translateX: riseIn ends on
+   transform:none, which would wipe out any transform used for centring. */
+.intro-ctl{
+  position:absolute;left:0;right:0;bottom:38px;
+  z-index:3;margin:0;
+  animation:riseIn 1.3s ease-out .68s both;
+}
 
 /* =========================================================
    BENGALI SCENE - intro screen only
@@ -501,10 +517,11 @@ html[data-lang="bn"] .intro-hint{
 /* The container must be full width, not icon width. The invocation is
    nowrap and far wider than the icon, and an overflowing line box is not
    recentred by text-align - it spills off the end edge instead. */
+/* Pinned just under the toran, so the middle of the screen belongs to the
+   seal alone. The invocation and eyebrow follow it up there. */
 .ganesha{
-  position:relative;z-index:2;text-align:center;
-  width:100%;
-  margin:0 auto 14px;
+  position:absolute;top:130px;left:0;right:0;
+  z-index:2;text-align:center;margin:0;
 }
 .ganesha svg{width:clamp(62px,18vw,82px);margin:0 auto;color:var(--gold)}
 .ganesha .gj{stroke:var(--accent)}
@@ -561,7 +578,7 @@ html[data-lang="bn"] .ganesha-say{
 @keyframes sway{0%,100%{transform:rotate(-3.4deg)}50%{transform:rotate(3.4deg)}}
 
 /* --- diyas: irregular flicker, because a smooth pulse reads as fake --- */
-.diya{position:absolute;bottom:11%;width:62px;z-index:2}
+.diya{position:absolute;bottom:4.5%;width:62px;z-index:2}
 .diya-l{left:6%}
 .diya-r{right:6%}
 .diya .flame{
@@ -580,13 +597,13 @@ html[data-lang="bn"] .ganesha-say{
   100%{transform:scale(1,1)      skewX(0)      translateX(0)}
 }
 .diya-glow{
-  position:absolute;bottom:10.5%;width:112px;height:112px;
+  position:absolute;bottom:4%;width:112px;height:112px;
   border-radius:50%;
   background:radial-gradient(circle,rgba(224,150,50,.22),transparent 66%);
   animation:glowPulse 1.9s ease-in-out infinite;
 }
 [data-theme="dark"] .diya-glow{
-  width:150px;height:150px;bottom:8%;
+  width:150px;height:150px;bottom:1.5%;
   background:radial-gradient(circle,rgba(240,168,64,.42),transparent 68%);
 }
 .diya-glow.gl{left:calc(6% - 25px)}
@@ -1117,26 +1134,8 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       <span class="en">Shri Shri Ganeshaya Namah</span>
       <span class="bn">শ্রী শ্রী গণেশায় নমঃ</span>
     </p>
+    <p class="intro-eyebrow"><span class="en">Together with our families</span><span class="bn">পরিবারের সকলকে সঙ্গে নিয়ে</span></p>
   </div>
-
-  <p class="intro-eyebrow"><span class="en">Together with our families</span><span class="bn">পরিবারের সকলকে সঙ্গে নিয়ে</span></p>
-
-  <svg class="crowns" viewBox="0 0 170 62" aria-hidden="true">
-    <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M28 56 Q28 28 52 12 Q76 28 76 56 Z"/>
-      <path d="M36 56 Q36 33 52 21 Q68 33 68 56" opacity=".45"/>
-      <path d="M52 12 V4"/>
-      <circle cx="52" cy="2.6" r="2.4"/>
-      <path d="M34 44 H70" opacity=".4"/>
-      <path d="M24 56 H80"/>
-      <path d="M100 56 Q100 34 118 22 Q136 34 136 56 Z"/>
-      <path d="M106 56 Q106 38 118 29 Q130 38 130 56" opacity=".45"/>
-      <path d="M118 22 V14"/>
-      <circle cx="118" cy="12.6" r="2.2"/>
-      <path d="M96 56 H140"/>
-      <path d="M84 50 Q88 44 92 50" opacity=".5"/>
-    </g>
-  </svg>
 
   <div class="suro-holder">
     <span class="sp-ring sp-shankha" aria-hidden="true"></span>
@@ -1148,46 +1147,20 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     </button>
   </div>
 
+  <div class="intro-lower">
+  <p class="intro-hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 20V5"/><path d="M5.5 11.5L12 5l6.5 6.5"/>
+    </svg>
+    <span class="en">Tap #SuRo to open</span><span class="bn">খুলতে #SuRo-তে ট্যাপ করুন</span>
+  </p>
   <p class="intro-line">
     <span class="en">You are invited to the marriage of <br>Susmita Basak &amp; Rohit Mukherjee</span>
     <span class="bn">আপনাকে আমন্ত্রণ জানাই <br>সুস্মিতা বসাক ও রোহিত মুখার্জীর শুভ বিবাহে</span>
   </p>
   <p class="intro-date"><span class="en">4 &amp; 5 December 2026 &middot; Kolkata</span><span class="bn">৪ ও ৫ ডিসেম্বর ২০২৬ &middot; কলকাতা</span></p>
-  <p class="intro-hint">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M12 20V5"/><path d="M5.5 11.5L12 5l6.5 6.5"/>
-    </svg>
-    <span class="en">Tap the seal to open</span><span class="bn">খুলতে সিলে ট্যাপ করুন</span>
-  </p>
-
+  </div>
   <div class="ctl-row intro-ctl">
-    <button class="ctl ctl-palette" data-palette-btn type="button" title="Switch to the mauve look" aria-label="Switch to the mauve look">
-      <svg class="ico-gem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2.8 L20.2 9.6 L12 21.2 L3.8 9.6 Z"/>
-        <path d="M3.8 9.6 H20.2"/>
-        <path d="M12 2.8 L8.5 9.6 L12 21.2"/>
-        <path d="M12 2.8 L15.5 9.6 L12 21.2"/>
-      </svg>
-      <svg class="ico-rosette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z"/>
-        <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z" transform="rotate(60 12 12)"/>
-        <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z" transform="rotate(120 12 12)"/>
-        <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z" transform="rotate(180 12 12)"/>
-        <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z" transform="rotate(240 12 12)"/>
-        <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z" transform="rotate(300 12 12)"/>
-        <circle cx="12" cy="12" r="1.5"/>
-      </svg>
-    </button>
-    <button class="ctl ctl-mode" data-mode-btn type="button" title="Switch to dark" aria-label="Switch to dark">
-      <svg class="ico-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round">
-        <circle cx="12" cy="12" r="4.1"/>
-        <path d="M12 2.4v2.5M12 19.1v2.5M2.4 12h2.5M19.1 12h2.5M5.2 5.2l1.8 1.8M17 17l1.8 1.8M18.8 5.2L17 7M7 17l-1.8 1.8"/>
-      </svg>
-      <svg class="ico-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20.3 14.1A8.5 8.5 0 1 1 10.1 3.7a6.7 6.7 0 0 0 10.2 10.4z"/>
-        <path d="M17.4 3.9l.55 1.5 1.5.55-1.5.55-.55 1.5-.55-1.5-1.5-.55 1.5-.55z"/>
-      </svg>
-    </button>
     <button class="ctl ctl-lang" data-lang-btn type="button" title="Switch to Bengali / বাংলায় দেখুন" aria-label="Switch to Bengali">
       <span class="glyph glyph-bn">অ</span>
       <span class="glyph glyph-en">A</span>
@@ -1794,6 +1767,50 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       b.innerHTML=flower('jaba',cs);
     });
   }
+
+  /* ---------- centre the rotating alpona on the seal ----------
+     Sized to the clear gap between the Ganesha group above and the invite
+     lines below, so the seal is the only thing inside the ring. */
+  function fitAlponaToSeal(){
+    var a=document.querySelector('.intro-alpona');
+    var seal=document.getElementById('startBtn');
+    var intro=document.getElementById('intro');
+    if(!a||!seal||!intro)return;
+    var ib=intro.getBoundingClientRect(), sb=seal.getBoundingClientRect();
+    var cx=sb.left+sb.width/2-ib.left, cy=sb.top+sb.height/2-ib.top;
+
+    var above=document.querySelector('.ganesha');
+    var below=document.querySelector('.intro-lower');
+    var topLimit=above?above.getBoundingClientRect().bottom-ib.top:0;
+    var botLimit=below?below.getBoundingClientRect().top-ib.top:ib.height;
+    var pad=14;
+    var radius=Math.min(cy-topLimit-pad, botLimit-cy-pad, ib.width*0.46);
+    radius=Math.max(radius,90);
+
+    a.style.width=(radius*2)+'px';
+    a.style.left=cx+'px';
+    a.style.top=cy+'px';
+    a.style.transform='translate(-50%,-50%)';
+
+    /* the pulse rings swell from the same centre */
+    Array.prototype.forEach.call(document.querySelectorAll('.pulse'),function(p){
+      p.style.left=cx+'px';
+      p.style.top=cy+'px';
+    });
+  }
+  /* Must re-run once webfonts land: they change the seal's size and position,
+     and a ring positioned before that sits off-centre. */
+  fitAlponaToSeal();
+  window.addEventListener('load',fitAlponaToSeal);
+  if(document.fonts&&document.fonts.ready){
+    document.fonts.ready.then(function(){setTimeout(fitAlponaToSeal,80)});
+  }
+  setTimeout(fitAlponaToSeal,1200);
+  var alponaTimer=null;
+  window.addEventListener('resize',function(){
+    clearTimeout(alponaTimer);
+    alponaTimer=setTimeout(fitAlponaToSeal,180);
+  });
 
   /* ---------- toran ----------
      Built at the real viewport width. A fixed viewBox stretched with
