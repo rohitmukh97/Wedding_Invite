@@ -391,7 +391,7 @@ html[data-lang="bn"] .intro-hint{
 
 /* =========================================================
    BENGALI SCENE - intro screen only
-   Toran, diyas, shankha, dhunuchi, topor and mukut.
+   Toran, seated diyas, hanging diyas.
    All CSS and inline SVG. No libraries.
    ========================================================= */
 .scene{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
@@ -612,33 +612,100 @@ html[data-lang="bn"] .ganesha-say{
 [data-theme="dark"] .diya-glow.gr{right:calc(6% - 44px)}
 @keyframes glowPulse{0%,100%{opacity:.72;transform:scale(1)}50%{opacity:1;transform:scale(1.09)}}
 
-/* --- shankha, with the sound going out of it --- */
-.shankha{position:absolute;left:4.5%;top:12.5%;width:72px;color:var(--accent)}
-.shankha .ripple{
-  transform-box:fill-box;transform-origin:0% 50%;
-  animation:ripple 4.2s cubic-bezier(.2,.6,.3,1) infinite;
+/* --- hanging diyas in the top corners: a different lamp from the seated
+       pair at the bottom - suspended on chains, swinging from the ring --- */
+.hdiya{
+  position:absolute;top:11.5%;width:50px;z-index:2;
+  transform-origin:50% 6%;
+  animation:hdSwing 5.2s ease-in-out infinite;
 }
-.shankha .ripple:nth-of-type(2){animation-delay:.45s}
-.shankha .ripple:nth-of-type(3){animation-delay:.9s}
-@keyframes ripple{
-  0%{opacity:0;transform:scale(.35)}
-  18%{opacity:.6}
-  100%{opacity:0;transform:scale(2)}
+.hdiya-l{left:4.5%}
+.hdiya-r{right:4.5%;animation-duration:6.1s;animation-delay:-1.8s}
+.hdiya .flame{
+  transform-box:fill-box;transform-origin:50% 100%;
+  animation:flicker 2.1s ease-in-out infinite;
+}
+.hdiya-r .flame{animation-duration:1.8s;animation-delay:-.6s}
+@keyframes hdSwing{
+  0%,100%{transform:rotate(-5deg)}
+  50%{transform:rotate(5deg)}
+}
+.hdiya-glow{
+  position:absolute;top:15.5%;width:84px;height:84px;border-radius:50%;
+  background:radial-gradient(circle,rgba(240,168,64,.30),transparent 68%);
+  animation:glowPulse 2.1s ease-in-out infinite;
+}
+.hdiya-glow.hgl{left:calc(4.5% - 17px)}
+.hdiya-glow.hgr{right:calc(4.5% - 17px);animation-duration:1.8s;animation-delay:-.6s}
+
+/* --- toran: mango leaves and marigolds strung across the top --- */
+.toran{position:absolute;top:13px;left:0;width:100%;height:104px}
+.toran svg{width:100%;height:100%}
+.toran .hang{
+  transform-box:fill-box;transform-origin:50% 0%;
+  animation:sway 4.8s ease-in-out infinite;
+}
+.toran .hang:nth-of-type(2n){animation-duration:5.7s;animation-delay:-.9s}
+.toran .hang:nth-of-type(3n){animation-duration:6.4s;animation-delay:-1.8s}
+.toran .hang:nth-of-type(5n){animation-duration:5.2s;animation-delay:-2.6s}
+@keyframes sway{0%,100%{transform:rotate(-3.4deg)}50%{transform:rotate(3.4deg)}}
+
+/* --- diyas: irregular flicker, because a smooth pulse reads as fake --- */
+.diya{position:absolute;bottom:4.5%;width:62px;z-index:2}
+.diya-l{left:6%}
+.diya-r{right:6%}
+.diya .flame{
+  transform-box:fill-box;transform-origin:50% 100%;
+  animation:flicker 1.9s ease-in-out infinite;
+}
+.diya-r .flame{animation-duration:2.3s;animation-delay:-.7s}
+@keyframes flicker{
+  0%  {transform:scale(1,1)      skewX(0)      translateX(0)}
+  11% {transform:scale(.94,1.09) skewX(-3.5deg) translateX(-.6px)}
+  26% {transform:scale(1.05,.93) skewX(2.5deg)  translateX(.7px)}
+  39% {transform:scale(.97,1.12) skewX(-2deg)   translateX(-.4px)}
+  54% {transform:scale(1.02,.96) skewX(3.5deg)  translateX(.6px)}
+  68% {transform:scale(.93,1.07) skewX(-1deg)   translateX(-.5px)}
+  83% {transform:scale(1.04,.95) skewX(1.5deg)  translateX(.4px)}
+  100%{transform:scale(1,1)      skewX(0)      translateX(0)}
+}
+.diya-glow{
+  position:absolute;bottom:4%;width:112px;height:112px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(224,150,50,.22),transparent 66%);
+  animation:glowPulse 1.9s ease-in-out infinite;
+}
+[data-theme="dark"] .diya-glow{
+  width:150px;height:150px;bottom:1.5%;
+  background:radial-gradient(circle,rgba(240,168,64,.42),transparent 68%);
+}
+.diya-glow.gl{left:calc(6% - 25px)}
+.diya-glow.gr{right:calc(6% - 25px);animation-duration:2.3s;animation-delay:-.7s}
+[data-theme="dark"] .diya-glow.gl{left:calc(6% - 44px)}
+[data-theme="dark"] .diya-glow.gr{right:calc(6% - 44px)}
+@keyframes glowPulse{0%,100%{opacity:.72;transform:scale(1)}50%{opacity:1;transform:scale(1.09)}}
+
+/* --- kulo, the winnowing tray used to welcome the groom --- */
+.kulo{
+  position:absolute;left:4%;top:12%;width:74px;color:var(--gold);
+  transform-origin:50% 90%;
+  animation:kuloTilt 5.4s ease-in-out infinite;
+}
+.kulo .kj{stroke:var(--accent)}
+@keyframes kuloTilt{
+  0%,100%{transform:rotate(-4deg)}
+  50%{transform:rotate(4deg)}
 }
 
-/* --- dhunuchi, smoke curling up --- */
-.dhunuchi{position:absolute;right:5%;top:13%;width:50px;color:var(--gold)}
-.dhunuchi .smoke path{
-  transform-box:fill-box;transform-origin:50% 100%;
-  animation:smoke 6.4s ease-in-out infinite;
+/* --- topor, the groom's shola-pith crown --- */
+.topor{
+  position:absolute;right:4.5%;top:11.5%;width:56px;color:var(--gold);
+  animation:toporBob 4.8s ease-in-out infinite;
 }
-.dhunuchi .smoke path:nth-of-type(2){animation-duration:7.6s;animation-delay:-2.1s}
-.dhunuchi .smoke path:nth-of-type(3){animation-duration:5.8s;animation-delay:-4s}
-@keyframes smoke{
-  0%{opacity:0;transform:translateY(0) translateX(0) scale(.7)}
-  22%{opacity:.42}
-  60%{transform:translateY(-26px) translateX(4px) scale(1.15)}
-  100%{opacity:0;transform:translateY(-52px) translateX(-3px) scale(1.5)}
+.topor .tj{stroke:var(--accent)}
+@keyframes toporBob{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px)}
 }
 
 /* --- topor and mukut, rising into place above the monogram --- */
@@ -655,12 +722,11 @@ html[data-lang="bn"] .ganesha-say{
 }
 
 @media(max-height:700px){
-  .shankha,.dhunuchi{display:none}
+  .hdiya,.hdiya-glow{display:none}
   .diya{width:52px}
 }
 @media(prefers-reduced-motion:reduce){
-  .toran .hang,.diya .flame,.diya-glow,.shankha .ripple,.dhunuchi .smoke path,.crowns{animation:none}
-  .dhunuchi .smoke{opacity:.3}
+  .toran .hang,.diya .flame,.diya-glow,.hdiya,.hdiya .flame,.hdiya-glow{animation:none}
 }
 
 /* the 2 second alpona transition between intro and invitation */
@@ -1011,38 +1077,42 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     <!-- toran: rope, mango leaves, marigolds -->
     <div class="toran"></div>
 
-    <!-- shankha, sounding -->
-    <div class="shankha">
-      <svg viewBox="0 0 70 54">
-        <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 40 C1 31 4 18 14 12 C23 6 34 6 39 13 C43 19 41 27 35 29 C30 31 26 28 27 24 C28 21 31 20 33 22"/>
-          <path d="M6 40 C10 48 22 52 31 48 C38 45 42 39 42 32"/>
-          <path d="M12 20 C17 16 24 15 29 18" opacity=".5"/>
-          <path d="M10 28 C15 24 22 23 27 26" opacity=".4"/>
-          <path d="M14 44 C20 47 28 47 33 44" opacity=".45"/>
+    <!-- hanging diyas, one per top corner -->
+    <div class="hdiya-glow hgl"></div>
+    <div class="hdiya-glow hgr"></div>
+    <div class="hdiya hdiya-l">
+      <svg viewBox="0 0 46 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="23" cy="4.5" r="3.2"/>
+          <path d="M23 7.7 C18 14 12 24 10.5 35"/>
+          <path d="M23 7.7 C28 14 34 24 35.5 35"/>
         </g>
-        <g class="ripple-set" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
-          <path class="ripple" d="M46 20 C51 25 51 33 46 38"/>
-          <path class="ripple" d="M46 20 C51 25 51 33 46 38"/>
-          <path class="ripple" d="M46 20 C51 25 51 33 46 38"/>
+        <path class="flame" d="M23 34 C19.5 29 20.5 23.5 23 18.5 C25.5 23.5 26.5 29 23 34 Z" fill="var(--gold-l)"/>
+        <path class="flame" d="M23 33 C21 30 21.5 26.5 23 23.5 C24.5 26.5 25 30 23 33 Z" fill="#fff3d0" opacity=".85"/>
+        <g fill="none" stroke="var(--accent-d)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 35 C5 48 12 56 23 56 C34 56 41 48 41 35 Z"/>
+          <path d="M3 35 H43"/>
+          <path d="M10 43 C14 47 18.5 48.5 23 48.5 C27.5 48.5 32 47 36 43" opacity=".55"/>
+          <path d="M23 56 V60" opacity=".6"/>
+          <path d="M19 60 H27" opacity=".6"/>
         </g>
       </svg>
     </div>
-
-    <!-- dhunuchi, smoking -->
-    <div class="dhunuchi">
-      <svg viewBox="0 0 56 74">
-        <g class="smoke" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".85">
-          <path d="M28 40 C22 33 33 27 27 20 C22 14 30 9 27 3"/>
-          <path d="M20 41 C15 35 23 30 18 24 C14 19 20 15 18 10"/>
-          <path d="M36 41 C41 35 33 30 38 24 C42 19 36 15 38 10"/>
+    <div class="hdiya hdiya-r">
+      <svg viewBox="0 0 46 64">
+        <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="23" cy="4.5" r="3.2"/>
+          <path d="M23 7.7 C18 14 12 24 10.5 35"/>
+          <path d="M23 7.7 C28 14 34 24 35.5 35"/>
         </g>
-        <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 44 L42 44 L36 58 L20 58 Z"/>
-          <path d="M20 58 L20 64 M36 58 L36 64"/>
-          <path d="M14 68 L42 68"/>
-          <path d="M20 64 C24 70 32 70 36 64"/>
-          <path d="M18 44 C24 40 32 40 38 44" opacity=".6"/>
+        <path class="flame" d="M23 34 C19.5 29 20.5 23.5 23 18.5 C25.5 23.5 26.5 29 23 34 Z" fill="var(--gold-l)"/>
+        <path class="flame" d="M23 33 C21 30 21.5 26.5 23 23.5 C24.5 26.5 25 30 23 33 Z" fill="#fff3d0" opacity=".85"/>
+        <g fill="none" stroke="var(--accent-d)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 35 C5 48 12 56 23 56 C34 56 41 48 41 35 Z"/>
+          <path d="M3 35 H43"/>
+          <path d="M10 43 C14 47 18.5 48.5 23 48.5 C27.5 48.5 32 47 36 43" opacity=".55"/>
+          <path d="M23 56 V60" opacity=".6"/>
+          <path d="M19 60 H27" opacity=".6"/>
         </g>
       </svg>
     </div>
