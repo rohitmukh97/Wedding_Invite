@@ -252,53 +252,101 @@ html[data-lang="en"] .ctl-lang .glyph-en{opacity:0;transform:scale(.7)}
 @keyframes draw{to{stroke-dashoffset:0}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* The small lines sit over alpona petals and pulse rings. Stacked shadows in
+   the page colour knock a clean halo out around each glyph, so the decoration
+   can stay busy without the text becoming unreadable. */
+.intro-eyebrow,.ganesha-say,.intro-date,.intro-hint{
+  text-shadow:
+    0 0 6px var(--bg),0 0 6px var(--bg),0 0 10px var(--bg),
+    0 0 16px var(--bg),0 0 26px var(--bg);
+}
 .intro-eyebrow{
   position:relative;z-index:2;
   font-size:10px;letter-spacing:.4em;text-transform:uppercase;
-  color:var(--ink-3);margin-bottom:6px;
+  color:var(--ink-2);margin-bottom:6px;
   animation:riseIn 1.1s ease-out both;
 }
 html[data-lang="bn"] .intro-eyebrow{letter-spacing:.1em;text-transform:none;font-size:13px}
 
-/* the #SuRo mark IS the button - edges dissolve, no hard border */
+/* the #SuRo mark IS the button - a wax seal you press */
 .suro-btn{
-  position:relative;z-index:2;
+  position:relative;z-index:2;overflow:hidden;
   display:inline-flex;align-items:center;justify-content:center;
-  border:0;background:none;cursor:pointer;
-  padding:clamp(30px,8vw,58px) clamp(46px,12vw,92px);
-  font-family:'Pinyon Script',cursive;
-  font-size:clamp(62px,17vw,124px);line-height:1;
-  color:var(--accent-d);
-  letter-spacing:.01em;
+  cursor:pointer;
+  padding:clamp(11px,2.8vw,19px) clamp(18px,4.6vw,33px);
+  border:1.5px solid var(--gold-l);
+  border-radius:50%;
+  background:
+    radial-gradient(ellipse 60% 55% at 38% 26%,rgba(255,255,255,.20),transparent 60%),
+    radial-gradient(ellipse 90% 90% at 50% 56%,var(--band-b),var(--band-a) 82%);
+  box-shadow:
+    inset 0 2px 7px rgba(255,255,255,.20),
+    inset 0 -8px 18px rgba(0,0,0,.32),
+    0 10px 26px var(--shadow);
   animation:riseIn 1.3s cubic-bezier(.22,.61,.36,1) .15s both;
-  transition:transform .7s cubic-bezier(.22,.61,.36,1),color .6s ease;
+  transition:transform .55s cubic-bezier(.22,.61,.36,1),box-shadow .55s ease;
   -webkit-tap-highlight-color:transparent;
 }
-.suro-btn::before{                       /* halo, fully faded at the edges */
-  content:"";position:absolute;inset:0;border-radius:50%;z-index:-2;
-  background:radial-gradient(ellipse 56% 60% at 50% 50%,
-    var(--gold-wash) 0%,var(--accent-wash) 42%,transparent 74%);
-  opacity:.85;
-  animation:halo 5.5s ease-in-out infinite;
+.suro-btn::after{                        /* hairline pressed into the wax */
+  content:"";position:absolute;inset:8px;border-radius:50%;
+  border:1px solid rgba(255,236,196,.34);pointer-events:none;
 }
-.suro-btn::after{                        /* ring that dissolves left and right */
-  content:"";position:absolute;inset:14% 6%;border-radius:50%;z-index:-1;
-  border:1px solid var(--gold);opacity:.5;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);
-          mask-image:linear-gradient(90deg,transparent,#000 22%,#000 78%,transparent);
+.suro-text{
+  position:relative;
+  font-family:'Pinyon Script',cursive;
+  font-size:clamp(26px,7vw,48px);line-height:1;
+  letter-spacing:.01em;color:#f2dda2;
 }
-.suro-btn .hash{font-family:'Cormorant Garamond',serif;font-size:.42em;color:var(--gold);margin-right:.04em;vertical-align:.42em}
-.suro-btn:hover,.suro-btn:focus-visible{transform:scale(1.045);color:var(--accent)}
-.suro-btn:hover::before{opacity:1}
-.suro-btn:active{transform:scale(.99)}
-@keyframes halo{0%,100%{opacity:.75;transform:scale(1)}50%{opacity:1;transform:scale(1.055)}}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .suro-text{
+    background-image:linear-gradient(100deg,#c69433 0%,#f0d795 28%,#fff6dc 50%,#f0d795 72%,#c69433 100%);
+    background-size:220% 100%;
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+    animation:foil 9s ease-in-out infinite;
+  }
+}
+.suro-btn .hash{font-family:'Cormorant Garamond',serif;font-size:.42em;margin-right:.04em;vertical-align:.42em;opacity:.9}
+.suro-btn:hover,.suro-btn:focus-visible{
+  transform:scale(1.035);
+  box-shadow:inset 0 2px 7px rgba(255,255,255,.24),inset 0 -8px 18px rgba(0,0,0,.3),0 14px 32px var(--shadow);
+}
+.suro-btn:active{transform:scale(.985)}
+
+/* the whole seal breathes, so it reads as something alive to press */
+.suro-holder{animation:breathe 4.4s ease-in-out 1.9s infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.028)}}
+
+/* rings pulsing outward from the seal - the tap affordance */
+.tap-ripple{
+  position:absolute;left:50%;top:50%;width:100%;height:100%;
+  border-radius:50%;border:1.5px solid rgba(var(--rose-a),.6);
+  transform:translate(-50%,-50%) scale(1.04);opacity:0;pointer-events:none;
+  animation:tapRipple 2.9s cubic-bezier(.2,.6,.3,1) 2.2s infinite;
+}
+.tap-ripple-2{animation-delay:3.65s}
+@keyframes tapRipple{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(1.04)}
+  16%{opacity:.5}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.42)}
+}
+
+/* press feedback - ink spreading from wherever the finger landed */
+.press-ink{
+  position:absolute;width:14px;height:14px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,240,205,.55),rgba(255,240,205,0) 70%);
+  transform:translate(-50%,-50%) scale(0);pointer-events:none;
+  animation:pressInk .62s ease-out forwards;
+}
+@keyframes pressInk{to{transform:translate(-50%,-50%) scale(16);opacity:0}}
 @keyframes riseIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
 .intro-line{
   position:relative;z-index:2;text-align:center;
   font-family:'Cormorant Garamond',serif;font-style:italic;
   font-size:clamp(19px,4.6vw,25px);color:var(--ink-2);
-  margin-top:-4px;
+  /* clears the seal AND the bangle ring, which extends below it */
+  margin-top:22px;
   animation:riseIn 1.3s ease-out .3s both;
 }
 html[data-lang="bn"] .intro-line{font-family:'Noto Serif Bengali',serif;font-style:normal;font-size:clamp(17px,4.2vw,21px)}
@@ -311,11 +359,18 @@ html[data-lang="bn"] .intro-line{font-family:'Noto Serif Bengali',serif;font-sty
 html[data-lang="bn"] .intro-date{letter-spacing:.06em;text-transform:none;font-size:14px}
 .intro-hint{
   position:relative;z-index:2;
-  font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;
-  color:var(--ink-3);margin-top:8px;opacity:.85;
-  animation:riseIn 1.3s ease-out .55s both;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  font-family:'Montserrat',sans-serif;font-size:11px;font-weight:400;
+  letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent);margin-top:10px;
+  animation:riseIn 1.3s ease-out .55s both,bob 2.8s ease-in-out 2.2s infinite;
 }
-html[data-lang="bn"] .intro-hint{font-family:'Hind Siliguri',sans-serif;font-style:normal}
+.intro-hint svg{width:13px;height:13px;flex:0 0 auto}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+html[data-lang="bn"] .intro-hint{
+  font-family:'Hind Siliguri',sans-serif;
+  letter-spacing:.03em;text-transform:none;font-size:14px;
+}
 .intro-ctl{position:relative;z-index:2;margin-top:38px;animation:riseIn 1.3s ease-out .68s both}
 
 /* =========================================================
@@ -443,12 +498,15 @@ html[data-lang="bn"] .intro-hint{font-family:'Hind Siliguri',sans-serif;font-sty
 /* --- Ganesha, top centre, the traditional place on a wedding card --- */
 /* In the flow, not absolute: the intro content is vertically centred, so an
    absolutely-placed Ganesha collides with the eyebrow line on short screens. */
+/* The container must be full width, not icon width. The invocation is
+   nowrap and far wider than the icon, and an overflowing line box is not
+   recentred by text-align - it spills off the end edge instead. */
 .ganesha{
   position:relative;z-index:2;text-align:center;
-  width:clamp(62px,18vw,82px);
+  width:100%;
   margin:0 auto 14px;
 }
-.ganesha svg{width:100%;color:var(--gold)}
+.ganesha svg{width:clamp(62px,18vw,82px);margin:0 auto;color:var(--gold)}
 .ganesha .gj{stroke:var(--accent)}
 .ganesha .draw-in{
   stroke-dasharray:300;stroke-dashoffset:300;
@@ -459,14 +517,17 @@ html[data-lang="bn"] .intro-hint{font-family:'Hind Siliguri',sans-serif;font-sty
 .ganesha-say{
   margin-top:7px;
   font-size:9px;letter-spacing:.24em;text-transform:uppercase;
-  color:var(--accent);opacity:.85;white-space:nowrap;
+  color:var(--accent);opacity:1;white-space:nowrap;
   animation:riseIn 1.2s ease-out 1.5s both;
 }
 html[data-lang="bn"] .ganesha-say{
   font-family:'Noto Serif Bengali',serif;
   letter-spacing:.04em;text-transform:none;font-size:12px;
 }
-@media(max-height:760px){.ganesha{width:clamp(52px,15vw,66px);margin-bottom:9px}}
+@media(max-height:760px){
+  .ganesha{margin-bottom:9px}
+  .ganesha svg{width:clamp(52px,15vw,66px)}
+}
 
 /* --- shankha and pola, the bride's bangles, ringing the monogram --- */
 .suro-holder{position:relative;z-index:2;display:inline-flex;align-items:center;justify-content:center}
@@ -474,13 +535,14 @@ html[data-lang="bn"] .ganesha-say{
   position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   border-radius:50%;pointer-events:none;
 }
+/* the bangles ring the seal from outside, so they must exceed 100% */
 .sp-shankha{
-  width:99%;height:79%;
+  width:116%;height:130%;
   border:3px solid #fdfaf4;
   box-shadow:0 0 0 1px var(--accent-wash),inset 0 0 0 1px var(--accent-wash),0 2px 12px rgba(0,0,0,.06);
 }
 .sp-pola{
-  width:90%;height:67%;
+  width:107%;height:115%;
   border:2px solid var(--accent);opacity:.62;
   box-shadow:0 0 18px -6px var(--glow);
 }
@@ -567,7 +629,7 @@ html[data-lang="bn"] .ganesha-say{
   position:relative;z-index:2;
   width:clamp(120px,32vw,168px);
   color:var(--gold);opacity:.9;
-  margin:0 auto -6px;
+  margin:0 auto 26px;  /* clear of the bangle ring, which sits ~20px above the seal */
   animation:crownRise 1.5s cubic-bezier(.22,.61,.36,1) .5s both;
 }
 @keyframes crownRise{
@@ -1079,8 +1141,10 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
   <div class="suro-holder">
     <span class="sp-ring sp-shankha" aria-hidden="true"></span>
     <span class="sp-ring sp-pola" aria-hidden="true"></span>
-    <button class="suro-btn" id="startBtn" type="button">
-      <span class="hash">#</span>SuRo
+    <span class="tap-ripple tap-ripple-1" aria-hidden="true"></span>
+    <span class="tap-ripple tap-ripple-2" aria-hidden="true"></span>
+    <button class="suro-btn" id="startBtn" type="button" aria-label="Open the invitation">
+      <span class="suro-text"><span class="hash">#</span>SuRo</span>
     </button>
   </div>
 
@@ -1089,7 +1153,12 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     <span class="bn">আপনাকে আমন্ত্রণ জানাই <br>সুস্মিতা বসাক ও রোহিত মুখার্জীর শুভ বিবাহে</span>
   </p>
   <p class="intro-date"><span class="en">4 &amp; 5 December 2026 &middot; Kolkata</span><span class="bn">৪ ও ৫ ডিসেম্বর ২০২৬ &middot; কলকাতা</span></p>
-  <p class="intro-hint"><span class="en">Tap the monogram to open</span><span class="bn">খুলতে মনোগ্রামে ট্যাপ করুন</span></p>
+  <p class="intro-hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 20V5"/><path d="M5.5 11.5L12 5l6.5 6.5"/>
+    </svg>
+    <span class="en">Tap the seal to open</span><span class="bn">খুলতে সিলে ট্যাপ করুন</span>
+  </p>
 
   <div class="ctl-row intro-ctl">
     <button class="ctl ctl-palette" data-palette-btn type="button" title="Switch to the mauve look" aria-label="Switch to the mauve look">
@@ -1616,6 +1685,18 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
   var veil=document.getElementById('veil');
   var invite=document.getElementById('invite');
   var started=false;
+
+  /* ink spreading from wherever the finger landed, so the press is confirmed */
+  document.getElementById('startBtn').addEventListener('pointerdown',function(e){
+    if(reduce)return;
+    var box=this.getBoundingClientRect();
+    var ink=document.createElement('span');
+    ink.className='press-ink';
+    ink.style.left=(e.clientX-box.left)+'px';
+    ink.style.top=(e.clientY-box.top)+'px';
+    this.appendChild(ink);
+    setTimeout(function(){ink.remove()},650);
+  });
 
   document.getElementById('startBtn').addEventListener('click',function(){
     if(started)return;
