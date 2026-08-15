@@ -39,24 +39,26 @@
 
 /* ---------- PALETTE A: Bengali Wedding (default) ---------- */
 :root{
-  --bg:#fbf6ee; --bg-2:#f6f0e4; --bg-3:#fdf4ea;
-  --ink:#2b1b16; --ink-2:#4f3a30; --ink-3:#7c675a;
-  --accent:#a4161a; --accent-l:#c05f5f; --accent-d:#6e1023; --accent-wash:#f2dcd6;
-  --gold:#c79a3a; --gold-l:#ddb96a; --gold-wash:#f6e8c8;
-  --leaf:#5f7a3c; --leaf-l:#9aab72;
-  --line:#e3d5bd;
-  --glow:rgba(164,22,26,.26);
-  --shadow:rgba(43,27,22,.14);
+  --bg:#fdf8f0; --bg-2:#f7efdf; --bg-3:#fffaf3;
+  --ink:#26120f; --ink-2:#4a332a; --ink-3:#7a6252;
+  --accent:#9d0f18; --accent-l:#c2494e; --accent-d:#5e0d18; --accent-wash:#f4d8d2;
+  --gold:#bf8f2c; --gold-l:#e0bd6a; --gold-wash:#f9e9c4;
+  --leaf:#5a7636; --leaf-l:#9aab72;
+  --line:#e6d3b2;
+  --glow:rgba(157,15,24,.3);
+  --shadow:rgba(38,18,15,.16);
+  --band-a:#5e0d18; --band-b:#9d0f18;
 }
 [data-theme="dark"]{
-  --bg:#17100f; --bg-2:#1d1513; --bg-3:#221715;
-  --ink:#f0e5d6; --ink-2:#cebda7; --ink-3:#928275;
-  --accent:#e0736f; --accent-l:#9a4a48; --accent-d:#f0908a; --accent-wash:#33201e;
-  --gold:#dfb964; --gold-l:#b3903f; --gold-wash:#2b2214;
-  --leaf:#9aad6a; --leaf-l:#6f7f45;
-  --line:#3a2a25;
-  --glow:rgba(224,115,111,.24);
-  --shadow:rgba(0,0,0,.5);
+  --bg:#190d0e; --bg-2:#21110f; --bg-3:#291614;
+  --ink:#f6e8d6; --ink-2:#d6c2a8; --ink-3:#9b8574;
+  --accent:#e8807b; --accent-l:#a24f4a; --accent-d:#f5a09a; --accent-wash:#3c1d1c;
+  --gold:#e6c273; --gold-l:#bb9542; --gold-wash:#33260f;
+  --leaf:#a3b673; --leaf-l:#75854a;
+  --line:#432722;
+  --glow:rgba(232,128,123,.28);
+  --shadow:rgba(0,0,0,.55);
+  --band-a:#451215; --band-b:#7d2b28;
 }
 /* ---------- PALETTE B: Premium Mauve ---------- */
 [data-palette="mauve"]{
@@ -68,6 +70,7 @@
   --line:#ded3e2;
   --glow:rgba(142,110,150,.26);
   --shadow:rgba(42,32,41,.14);
+  --band-a:#43213f; --band-b:#8e6e96;
 }
 [data-palette="mauve"][data-theme="dark"]{
   --bg:#17101a; --bg-2:#1d1522; --bg-3:#231829;
@@ -78,6 +81,7 @@
   --line:#332740;
   --glow:rgba(201,162,208,.24);
   --shadow:rgba(0,0,0,.5);
+  --band-a:#2c1930; --band-b:#5c3f63;
 }
 
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
@@ -90,6 +94,59 @@ body{
 }
 img,video,svg{max-width:100%;display:block}
 .wrap{width:min(880px,100% - 44px);margin-inline:auto}
+
+/* Warm the paper so it reads as card stock rather than flat cream.
+   Bengali only - mauve wants to stay cool. */
+html:not([data-palette="mauve"]) body{
+  background-image:
+    radial-gradient(ellipse 92% 55% at 50% 0%,var(--gold-wash),transparent 62%),
+    radial-gradient(ellipse 78% 48% at 50% 100%,var(--accent-wash),transparent 62%);
+  background-attachment:fixed;
+}
+
+/* garad band - the red-and-gold woven border of a Bengali wedding saree */
+.garad{
+  height:13px;width:100%;position:relative;
+  background:
+    repeating-linear-gradient(90deg,transparent 0 8px,rgba(255,255,255,.18) 8px 9px),
+    linear-gradient(180deg,var(--band-a),var(--band-b) 45%,var(--band-a));
+  box-shadow:inset 0 1px 0 var(--gold-l),inset 0 -1px 0 var(--gold-l);
+}
+.garad::after{
+  content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,
+    transparent 0 22px,var(--gold-l) 22px 23px,transparent 23px 30px);
+  opacity:.5;
+}
+
+/* gold-foil lettering with a slow shimmer */
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .names,.closing-hash{
+    background-image:linear-gradient(100deg,
+      var(--accent-d) 0%,var(--accent) 20%,var(--gold) 38%,var(--gold-l) 50%,
+      var(--gold) 62%,var(--accent) 80%,var(--accent-d) 100%);
+    background-size:230% 100%;
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+    animation:foil 11s ease-in-out infinite;
+  }
+  .names em{-webkit-text-fill-color:transparent}
+}
+@keyframes foil{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+}
+
+/* large alpona watermark behind the hero */
+.hero-mark{
+  position:absolute;top:44%;left:50%;
+  width:min(620px,132vw);aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  color:var(--gold);opacity:.085;pointer-events:none;z-index:0;
+  animation:spin 260s linear infinite;
+}
+[data-theme="dark"] .hero-mark{opacity:.13}
+.hero .wrap{position:relative;z-index:1}
 
 /* bilingual: both strings ship, CSS shows one */
 html[data-lang="en"] .bn{display:none!important}
@@ -122,18 +179,18 @@ html[data-lang="bn"] body{font-family:'Hind Siliguri',sans-serif;line-height:1.9
 .ctl:hover,.ctl:focus-visible{transform:translateY(-2px);border-color:var(--accent-l)}
 .ctl:hover::after{opacity:.65}
 
-/* the two palette buttons always wear their own colour, so you can see
-   which look you are choosing before you choose it */
-.ctl-bengali{--brand:#a4161a}
-.ctl-mauve{--brand:#8e6e96}
-[data-theme="dark"] .ctl-bengali{--brand:#e0736f}
-[data-theme="dark"] .ctl-mauve{--brand:#c9a2d0}
-.ctl-bengali,.ctl-mauve{color:var(--brand)}
-.ctl[aria-pressed="true"]{
-  color:var(--bg);background:var(--accent);border-color:var(--accent);
-  box-shadow:0 7px 20px var(--glow);
+/* One palette toggle. Like the sun/moon and the অ/A, it shows the look you
+   are switching TO, drawn in that palette's own colour as a preview. */
+.ctl-palette svg{
+  position:absolute;
+  transition:opacity .75s ease,transform .75s cubic-bezier(.22,.61,.36,1);
 }
-.ctl[aria-pressed="true"]::after{border-color:var(--bg);opacity:.5}
+.ctl-palette .ico-gem{color:#8e6e96}
+.ctl-palette .ico-rosette{color:#a4161a;opacity:0;transform:rotate(-40deg) scale(.7)}
+[data-theme="dark"] .ctl-palette .ico-gem{color:#c9a2d0}
+[data-theme="dark"] .ctl-palette .ico-rosette{color:#e0736f}
+[data-palette="mauve"] .ctl-palette .ico-gem{opacity:0;transform:rotate(40deg) scale(.7)}
+[data-palette="mauve"] .ctl-palette .ico-rosette{opacity:1;transform:none}
 
 /* day / night crossfade, driven purely by the theme attribute */
 .ctl-mode svg{position:absolute;transition:opacity .7s ease,transform .7s cubic-bezier(.22,.61,.36,1)}
@@ -165,9 +222,9 @@ html[data-lang="en"] .ctl-lang .glyph-en{opacity:0;transform:scale(.7)}
 
 .intro-alpona{
   position:absolute;top:50%;left:50%;
-  width:min(520px,116vw);aspect-ratio:1;
-  transform:translate(-50%,-64%);
-  color:var(--gold-l);opacity:.26;pointer-events:none;
+  width:min(560px,124vw);aspect-ratio:1;
+  transform:translate(-50%,-62%);
+  color:var(--gold);opacity:.42;pointer-events:none;
   -webkit-mask-image:radial-gradient(ellipse 62% 62% at 50% 46%,#000 55%,transparent 88%);
           mask-image:radial-gradient(ellipse 62% 62% at 50% 46%,#000 55%,transparent 88%);
 }
@@ -176,9 +233,18 @@ html[data-lang="en"] .ctl-lang .glyph-en{opacity:0;transform:scale(.7)}
 .intro-alpona .ring-b{animation:spin 170s linear infinite reverse}
 .intro-alpona path,.intro-alpona circle{
   stroke-dasharray:360;stroke-dashoffset:360;
-  animation:draw 2.6s cubic-bezier(.5,0,.2,1) forwards;
+  animation:draw 3.2s cubic-bezier(.45,0,.2,1) forwards;
 }
+.intro-alpona .ring-a path:nth-of-type(2){animation-delay:.12s}
+.intro-alpona .ring-a path:nth-of-type(3){animation-delay:.24s}
+.intro-alpona .ring-a path:nth-of-type(4){animation-delay:.36s}
+.intro-alpona .ring-a path:nth-of-type(5){animation-delay:.48s}
+.intro-alpona .ring-a path:nth-of-type(6){animation-delay:.6s}
+.intro-alpona .ring-a path:nth-of-type(7){animation-delay:.72s}
+.intro-alpona .ring-a path:nth-of-type(8){animation-delay:.84s}
 .intro-alpona .ring-b path,.intro-alpona .ring-b circle{animation-delay:.45s}
+/* two-tone: gold outer, sindoor-red inner */
+.intro-alpona .ring-b path,.intro-alpona .ring-b circle{stroke:var(--accent);opacity:.8}
 @keyframes draw{to{stroke-dashoffset:0}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
@@ -247,6 +313,162 @@ html[data-lang="bn"] .intro-date{letter-spacing:.06em;text-transform:none;font-s
 }
 html[data-lang="bn"] .intro-hint{font-family:'Hind Siliguri',sans-serif;font-style:normal}
 .intro-ctl{position:relative;z-index:2;margin-top:38px;animation:riseIn 1.3s ease-out .68s both}
+
+/* =========================================================
+   BENGALI SCENE - intro screen only
+   Toran, diyas, shankha, dhunuchi, topor and mukut.
+   All CSS and inline SVG. No libraries.
+   ========================================================= */
+.scene{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+
+/* --- garad bands framing the intro, same border as the invitation --- */
+.intro-band{position:absolute;left:0;right:0;z-index:3}
+.intro-band.top{top:0}
+.intro-band.bottom{bottom:0}
+
+/* --- Ganesha, top centre, the traditional place on a wedding card --- */
+/* In the flow, not absolute: the intro content is vertically centred, so an
+   absolutely-placed Ganesha collides with the eyebrow line on short screens. */
+.ganesha{
+  position:relative;z-index:2;text-align:center;
+  width:clamp(62px,18vw,82px);
+  margin:0 auto 14px;
+}
+.ganesha svg{width:100%;color:var(--gold)}
+.ganesha .gj{stroke:var(--accent)}
+.ganesha .draw-in{
+  stroke-dasharray:300;stroke-dashoffset:300;
+  animation:draw 2.4s cubic-bezier(.45,0,.2,1) .3s forwards;
+}
+.ganesha .draw-in:nth-of-type(2n){animation-delay:.5s}
+.ganesha .draw-in:nth-of-type(3n){animation-delay:.72s}
+.ganesha-say{
+  margin-top:7px;
+  font-size:9px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--accent);opacity:.85;white-space:nowrap;
+  animation:riseIn 1.2s ease-out 1.5s both;
+}
+html[data-lang="bn"] .ganesha-say{
+  font-family:'Noto Serif Bengali',serif;
+  letter-spacing:.04em;text-transform:none;font-size:12px;
+}
+@media(max-height:760px){.ganesha{width:clamp(52px,15vw,66px);margin-bottom:9px}}
+
+/* --- shankha and pola, the bride's bangles, ringing the monogram --- */
+.suro-holder{position:relative;z-index:2;display:inline-flex;align-items:center;justify-content:center}
+.sp-ring{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  border-radius:50%;pointer-events:none;
+}
+.sp-shankha{
+  width:99%;height:79%;
+  border:3px solid #fdfaf4;
+  box-shadow:0 0 0 1px var(--accent-wash),inset 0 0 0 1px var(--accent-wash),0 2px 12px rgba(0,0,0,.06);
+}
+.sp-pola{
+  width:90%;height:67%;
+  border:2px solid var(--accent);opacity:.62;
+  box-shadow:0 0 18px -6px var(--glow);
+}
+[data-theme="dark"] .sp-shankha{border-color:#e3d6c2;border-width:2.5px;opacity:.72}
+
+/* --- toran: mango leaves and marigolds strung across the top --- */
+.toran{position:absolute;top:13px;left:0;width:100%;height:104px}
+.toran svg{width:100%;height:100%}
+.toran .hang{
+  transform-box:fill-box;transform-origin:50% 0%;
+  animation:sway 4.8s ease-in-out infinite;
+}
+.toran .hang:nth-of-type(2n){animation-duration:5.7s;animation-delay:-.9s}
+.toran .hang:nth-of-type(3n){animation-duration:6.4s;animation-delay:-1.8s}
+.toran .hang:nth-of-type(5n){animation-duration:5.2s;animation-delay:-2.6s}
+@keyframes sway{0%,100%{transform:rotate(-3.4deg)}50%{transform:rotate(3.4deg)}}
+
+/* --- diyas: irregular flicker, because a smooth pulse reads as fake --- */
+.diya{position:absolute;bottom:11%;width:62px;z-index:2}
+.diya-l{left:6%}
+.diya-r{right:6%}
+.diya .flame{
+  transform-box:fill-box;transform-origin:50% 100%;
+  animation:flicker 1.9s ease-in-out infinite;
+}
+.diya-r .flame{animation-duration:2.3s;animation-delay:-.7s}
+@keyframes flicker{
+  0%  {transform:scale(1,1)      skewX(0)      translateX(0)}
+  11% {transform:scale(.94,1.09) skewX(-3.5deg) translateX(-.6px)}
+  26% {transform:scale(1.05,.93) skewX(2.5deg)  translateX(.7px)}
+  39% {transform:scale(.97,1.12) skewX(-2deg)   translateX(-.4px)}
+  54% {transform:scale(1.02,.96) skewX(3.5deg)  translateX(.6px)}
+  68% {transform:scale(.93,1.07) skewX(-1deg)   translateX(-.5px)}
+  83% {transform:scale(1.04,.95) skewX(1.5deg)  translateX(.4px)}
+  100%{transform:scale(1,1)      skewX(0)      translateX(0)}
+}
+.diya-glow{
+  position:absolute;bottom:10.5%;width:112px;height:112px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(224,150,50,.22),transparent 66%);
+  animation:glowPulse 1.9s ease-in-out infinite;
+}
+[data-theme="dark"] .diya-glow{
+  width:150px;height:150px;bottom:8%;
+  background:radial-gradient(circle,rgba(240,168,64,.42),transparent 68%);
+}
+.diya-glow.gl{left:calc(6% - 25px)}
+.diya-glow.gr{right:calc(6% - 25px);animation-duration:2.3s;animation-delay:-.7s}
+[data-theme="dark"] .diya-glow.gl{left:calc(6% - 44px)}
+[data-theme="dark"] .diya-glow.gr{right:calc(6% - 44px)}
+@keyframes glowPulse{0%,100%{opacity:.72;transform:scale(1)}50%{opacity:1;transform:scale(1.09)}}
+
+/* --- shankha, with the sound going out of it --- */
+.shankha{position:absolute;left:4.5%;top:12.5%;width:72px;color:var(--accent)}
+.shankha .ripple{
+  transform-box:fill-box;transform-origin:0% 50%;
+  animation:ripple 4.2s cubic-bezier(.2,.6,.3,1) infinite;
+}
+.shankha .ripple:nth-of-type(2){animation-delay:.45s}
+.shankha .ripple:nth-of-type(3){animation-delay:.9s}
+@keyframes ripple{
+  0%{opacity:0;transform:scale(.35)}
+  18%{opacity:.6}
+  100%{opacity:0;transform:scale(2)}
+}
+
+/* --- dhunuchi, smoke curling up --- */
+.dhunuchi{position:absolute;right:5%;top:13%;width:50px;color:var(--gold)}
+.dhunuchi .smoke path{
+  transform-box:fill-box;transform-origin:50% 100%;
+  animation:smoke 6.4s ease-in-out infinite;
+}
+.dhunuchi .smoke path:nth-of-type(2){animation-duration:7.6s;animation-delay:-2.1s}
+.dhunuchi .smoke path:nth-of-type(3){animation-duration:5.8s;animation-delay:-4s}
+@keyframes smoke{
+  0%{opacity:0;transform:translateY(0) translateX(0) scale(.7)}
+  22%{opacity:.42}
+  60%{transform:translateY(-26px) translateX(4px) scale(1.15)}
+  100%{opacity:0;transform:translateY(-52px) translateX(-3px) scale(1.5)}
+}
+
+/* --- topor and mukut, rising into place above the monogram --- */
+.crowns{
+  position:relative;z-index:2;
+  width:clamp(120px,32vw,168px);
+  color:var(--gold);opacity:.9;
+  margin:0 auto -6px;
+  animation:crownRise 1.5s cubic-bezier(.22,.61,.36,1) .5s both;
+}
+@keyframes crownRise{
+  0%{opacity:0;transform:translateY(14px) scale(.94)}
+  100%{opacity:.9;transform:none}
+}
+
+@media(max-height:700px){
+  .shankha,.dhunuchi{display:none}
+  .diya{width:52px}
+}
+@media(prefers-reduced-motion:reduce){
+  .toran .hang,.diya .flame,.diya-glow,.shankha .ripple,.dhunuchi .smoke path,.crowns{animation:none}
+  .dhunuchi .smoke{opacity:.3}
+}
 
 /* the 2 second alpona transition between intro and invitation */
 #veil{
@@ -441,13 +663,20 @@ html[data-lang="bn"] .day-head{font-family:'Noto Serif Bengali',serif;letter-spa
 html[data-lang="bn"] .closing-foot{letter-spacing:.05em;text-transform:none;font-size:14px}
 
 /* falling petals */
-.petals{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden}
-.petal{position:absolute;top:-8%;border-radius:60% 20% 60% 20%;opacity:0;animation-name:fall;animation-timing-function:linear;animation-iteration-count:infinite}
+/* above #intro (900) so the flowers fall on the opening screen too,
+   but below the veil (950) and the light/dark disc (945) */
+.petals{position:fixed;inset:0;pointer-events:none;z-index:920;overflow:hidden}
+.petal{
+  position:absolute;top:-8%;opacity:0;
+  animation-name:fall;animation-timing-function:linear;animation-iteration-count:infinite;
+  will-change:transform;
+}
+.petal svg{width:100%;height:100%;display:block}
 @keyframes fall{
-  0%{opacity:0;transform:translate3d(0,-10vh,0) rotate(0)}
-  8%{opacity:.55}
-  92%{opacity:.35}
-  100%{opacity:0;transform:translate3d(46px,108vh,0) rotate(420deg)}
+  0%{opacity:0;transform:translate3d(0,-10vh,0) rotate3d(1,.5,.2,0deg)}
+  8%{opacity:.85}
+  92%{opacity:.5}
+  100%{opacity:0;transform:translate3d(52px,108vh,0) rotate3d(1,.5,.2,860deg)}
 }
 
 /* =========================================================
@@ -537,6 +766,80 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
      INTRO
      ========================================================= -->
 <div id="intro">
+
+  <!-- ===== Bengali scene ===== -->
+  <div class="scene" aria-hidden="true">
+
+    <!-- garad bands, the same saree border as the invitation -->
+    <div class="garad intro-band top"></div>
+    <div class="garad intro-band bottom"></div>
+
+    <!-- toran: rope, mango leaves, marigolds -->
+    <div class="toran"></div>
+
+    <!-- shankha, sounding -->
+    <div class="shankha">
+      <svg viewBox="0 0 70 54">
+        <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 40 C1 31 4 18 14 12 C23 6 34 6 39 13 C43 19 41 27 35 29 C30 31 26 28 27 24 C28 21 31 20 33 22"/>
+          <path d="M6 40 C10 48 22 52 31 48 C38 45 42 39 42 32"/>
+          <path d="M12 20 C17 16 24 15 29 18" opacity=".5"/>
+          <path d="M10 28 C15 24 22 23 27 26" opacity=".4"/>
+          <path d="M14 44 C20 47 28 47 33 44" opacity=".45"/>
+        </g>
+        <g class="ripple-set" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+          <path class="ripple" d="M46 20 C51 25 51 33 46 38"/>
+          <path class="ripple" d="M46 20 C51 25 51 33 46 38"/>
+          <path class="ripple" d="M46 20 C51 25 51 33 46 38"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- dhunuchi, smoking -->
+    <div class="dhunuchi">
+      <svg viewBox="0 0 56 74">
+        <g class="smoke" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".85">
+          <path d="M28 40 C22 33 33 27 27 20 C22 14 30 9 27 3"/>
+          <path d="M20 41 C15 35 23 30 18 24 C14 19 20 15 18 10"/>
+          <path d="M36 41 C41 35 33 30 38 24 C42 19 36 15 38 10"/>
+        </g>
+        <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 44 L42 44 L36 58 L20 58 Z"/>
+          <path d="M20 58 L20 64 M36 58 L36 64"/>
+          <path d="M14 68 L42 68"/>
+          <path d="M20 64 C24 70 32 70 36 64"/>
+          <path d="M18 44 C24 40 32 40 38 44" opacity=".6"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- diyas -->
+    <div class="diya-glow gl"></div>
+    <div class="diya-glow gr"></div>
+    <div class="diya diya-l">
+      <svg viewBox="0 0 64 56">
+        <path class="flame" d="M32 30 C26 24 28 16 32 8 C36 16 38 24 32 30 Z" fill="var(--gold-l)"/>
+        <path class="flame" d="M32 29 C29 25 30 20 32 15 C34 20 35 25 32 29 Z" fill="#fff3d0" opacity=".85"/>
+        <g fill="none" stroke="var(--accent-d)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 36 C10 46 21 52 32 52 C43 52 54 46 54 36 Z"/>
+          <path d="M10 36 C18 32 46 32 54 36"/>
+          <path d="M28 34 C30 31 34 31 36 34" opacity=".7"/>
+        </g>
+      </svg>
+    </div>
+    <div class="diya diya-r">
+      <svg viewBox="0 0 64 56">
+        <path class="flame" d="M32 30 C26 24 28 16 32 8 C36 16 38 24 32 30 Z" fill="var(--gold-l)"/>
+        <path class="flame" d="M32 29 C29 25 30 20 32 15 C34 20 35 25 32 29 Z" fill="#fff3d0" opacity=".85"/>
+        <g fill="none" stroke="var(--accent-d)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 36 C10 46 21 52 32 52 C43 52 54 46 54 36 Z"/>
+          <path d="M10 36 C18 32 46 32 54 36"/>
+          <path d="M28 34 C30 31 34 31 36 34" opacity=".7"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
   <svg class="intro-alpona" viewBox="0 0 260 260" aria-hidden="true">
     <g class="ring-a" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
       <path d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z"/>
@@ -562,11 +865,69 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     </g>
   </svg>
 
+  <!-- Ganesha, invoked first, as on a printed card -->
+  <div class="ganesha">
+    <svg viewBox="0 0 80 80" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <circle class="draw-in" cx="40" cy="40" r="37.5" stroke-width="1"/>
+        <circle cx="40" cy="40" r="33.5" stroke-width=".7" stroke-dasharray="1.5 4" opacity=".65"/>
+        <!-- mukut -->
+        <path class="draw-in" d="M30 23 C32 12 48 12 50 23" stroke-width="1.4"/>
+        <path class="draw-in" d="M40 12 V6" stroke-width="1.3"/>
+        <circle class="gj" cx="40" cy="4.6" r="2.1" stroke-width="1.3"/>
+        <!-- head -->
+        <path class="draw-in" d="M40 20 C50 20 55.5 28 55.5 38 C55.5 48 49 54.5 40 54.5 C31 54.5 24.5 48 24.5 38 C24.5 28 30 20 40 20 Z" stroke-width="1.4"/>
+        <!-- ears -->
+        <path class="draw-in" d="M26 27 C15.5 24.5 8 32 10.5 40.5 C13 49 21 52 27.5 47.5" stroke-width="1.3"/>
+        <path class="draw-in" d="M54 27 C64.5 24.5 72 32 69.5 40.5 C67 49 59 52 52.5 47.5" stroke-width="1.3"/>
+        <path d="M22 32 C18 33 15.5 37 16.5 41" stroke-width=".8" opacity=".5"/>
+        <path d="M58 32 C62 33 64.5 37 63.5 41" stroke-width=".8" opacity=".5"/>
+        <!-- eyes -->
+        <path d="M32.5 35 C34.5 32.6 37 32.6 38.5 35" stroke-width="1.2"/>
+        <path d="M41.5 35 C43 32.6 45.5 32.6 47.5 35" stroke-width="1.2"/>
+        <!-- tilak -->
+        <path class="gj" d="M36.5 26 V30.5" stroke-width="1.2"/>
+        <path class="gj" d="M40 24.8 V30.5" stroke-width="1.2"/>
+        <path class="gj" d="M43.5 26 V30.5" stroke-width="1.2"/>
+        <!-- tusks -->
+        <path d="M34 47.5 C32 50.5 31.5 53 32.5 55" stroke-width="1.2"/>
+        <path d="M46 47.5 C48 50.5 48.5 53 47.5 55" stroke-width="1.2"/>
+        <!-- trunk -->
+        <path class="draw-in" d="M40 41 C40.5 49.5 37 56.5 31.5 59 C26 61.5 22.5 58 23.8 54 C24.8 50.8 29 50 30.5 53.2" stroke-width="1.5"/>
+      </g>
+    </svg>
+    <p class="ganesha-say">
+      <span class="en">Shri Shri Ganeshaya Namah</span>
+      <span class="bn">শ্রী শ্রী গণেশায় নমঃ</span>
+    </p>
+  </div>
+
   <p class="intro-eyebrow"><span class="en">Together with our families</span><span class="bn">পরিবারের সকলকে সঙ্গে নিয়ে</span></p>
 
-  <button class="suro-btn" id="startBtn" type="button">
-    <span class="hash">#</span>SuRo
-  </button>
+  <svg class="crowns" viewBox="0 0 170 62" aria-hidden="true">
+    <g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M28 56 Q28 28 52 12 Q76 28 76 56 Z"/>
+      <path d="M36 56 Q36 33 52 21 Q68 33 68 56" opacity=".45"/>
+      <path d="M52 12 V4"/>
+      <circle cx="52" cy="2.6" r="2.4"/>
+      <path d="M34 44 H70" opacity=".4"/>
+      <path d="M24 56 H80"/>
+      <path d="M100 56 Q100 34 118 22 Q136 34 136 56 Z"/>
+      <path d="M106 56 Q106 38 118 29 Q130 38 130 56" opacity=".45"/>
+      <path d="M118 22 V14"/>
+      <circle cx="118" cy="12.6" r="2.2"/>
+      <path d="M96 56 H140"/>
+      <path d="M84 50 Q88 44 92 50" opacity=".5"/>
+    </g>
+  </svg>
+
+  <div class="suro-holder">
+    <span class="sp-ring sp-shankha" aria-hidden="true"></span>
+    <span class="sp-ring sp-pola" aria-hidden="true"></span>
+    <button class="suro-btn" id="startBtn" type="button">
+      <span class="hash">#</span>SuRo
+    </button>
+  </div>
 
   <p class="intro-line">
     <span class="en">You are invited to the marriage of <br>Susmita Basak &amp; Rohit Mukherjee</span>
@@ -576,8 +937,14 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
   <p class="intro-hint"><span class="en">Tap the monogram to open</span><span class="bn">খুলতে মনোগ্রামে ট্যাপ করুন</span></p>
 
   <div class="ctl-row intro-ctl">
-    <button class="ctl ctl-bengali" data-palette-btn="bengali" type="button" aria-pressed="true" title="Bengali wedding colours / বাঙালি বিয়ের রঙ" aria-label="Bengali wedding colours">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+    <button class="ctl ctl-palette" data-palette-btn type="button" title="Switch to the mauve look" aria-label="Switch to the mauve look">
+      <svg class="ico-gem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2.8 L20.2 9.6 L12 21.2 L3.8 9.6 Z"/>
+        <path d="M3.8 9.6 H20.2"/>
+        <path d="M12 2.8 L8.5 9.6 L12 21.2"/>
+        <path d="M12 2.8 L15.5 9.6 L12 21.2"/>
+      </svg>
+      <svg class="ico-rosette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z"/>
         <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z" transform="rotate(60 12 12)"/>
         <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z" transform="rotate(120 12 12)"/>
@@ -585,14 +952,6 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
         <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z" transform="rotate(240 12 12)"/>
         <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z" transform="rotate(300 12 12)"/>
         <circle cx="12" cy="12" r="1.5"/>
-      </svg>
-    </button>
-    <button class="ctl ctl-mauve" data-palette-btn="mauve" type="button" aria-pressed="false" title="Premium mauve colours / মভ রঙ" aria-label="Premium mauve colours">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2.8 L20.2 9.6 L12 21.2 L3.8 9.6 Z"/>
-        <path d="M3.8 9.6 H20.2"/>
-        <path d="M12 2.8 L8.5 9.6 L12 21.2"/>
-        <path d="M12 2.8 L15.5 9.6 L12 21.2"/>
       </svg>
     </button>
     <button class="ctl ctl-mode" data-mode-btn type="button" title="Switch to dark" aria-label="Switch to dark">
@@ -635,8 +994,14 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
 
   <div class="bar">
     <div class="ctl-row">
-      <button class="ctl ctl-bengali" data-palette-btn="bengali" type="button" aria-pressed="true" title="Bengali wedding colours / বাঙালি বিয়ের রঙ" aria-label="Bengali wedding colours">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+      <button class="ctl ctl-palette" data-palette-btn type="button" title="Switch to the mauve look" aria-label="Switch to the mauve look">
+        <svg class="ico-gem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2.8 L20.2 9.6 L12 21.2 L3.8 9.6 Z"/>
+          <path d="M3.8 9.6 H20.2"/>
+          <path d="M12 2.8 L8.5 9.6 L12 21.2"/>
+          <path d="M12 2.8 L15.5 9.6 L12 21.2"/>
+        </svg>
+        <svg class="ico-rosette" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z"/>
           <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z" transform="rotate(60 12 12)"/>
           <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z" transform="rotate(120 12 12)"/>
@@ -644,14 +1009,6 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
           <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z" transform="rotate(240 12 12)"/>
           <path d="M12 12 C13.7 9.4 13.7 6.6 12 4 C10.3 6.6 10.3 9.4 12 12 Z" transform="rotate(300 12 12)"/>
           <circle cx="12" cy="12" r="1.5"/>
-        </svg>
-      </button>
-      <button class="ctl ctl-mauve" data-palette-btn="mauve" type="button" aria-pressed="false" title="Premium mauve colours / মভ রঙ" aria-label="Premium mauve colours">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2.8 L20.2 9.6 L12 21.2 L3.8 9.6 Z"/>
-          <path d="M3.8 9.6 H20.2"/>
-          <path d="M12 2.8 L8.5 9.6 L12 21.2"/>
-          <path d="M12 2.8 L15.5 9.6 L12 21.2"/>
         </svg>
       </button>
       <button class="ctl ctl-mode" data-mode-btn type="button" title="Switch to dark" aria-label="Switch to dark">
@@ -671,8 +1028,32 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     </div>
   </div>
 
+  <div class="garad" aria-hidden="true"></div>
+
   <!-- HERO -->
   <section class="hero">
+    <svg class="hero-mark" viewBox="0 0 260 260" aria-hidden="true">
+      <g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+        <path d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z"/>
+        <path d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(45 130 130)"/>
+        <path d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(90 130 130)"/>
+        <path d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(135 130 130)"/>
+        <path d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(180 130 130)"/>
+        <path d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(225 130 130)"/>
+        <path d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(270 130 130)"/>
+        <path d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(315 130 130)"/>
+        <path d="M130 98 C139 86, 139 74, 130 64 C121 74, 121 86, 130 98 Z" transform="rotate(22.5 130 130)"/>
+        <path d="M130 98 C139 86, 139 74, 130 64 C121 74, 121 86, 130 98 Z" transform="rotate(67.5 130 130)"/>
+        <path d="M130 98 C139 86, 139 74, 130 64 C121 74, 121 86, 130 98 Z" transform="rotate(112.5 130 130)"/>
+        <path d="M130 98 C139 86, 139 74, 130 64 C121 74, 121 86, 130 98 Z" transform="rotate(157.5 130 130)"/>
+        <path d="M130 98 C139 86, 139 74, 130 64 C121 74, 121 86, 130 98 Z" transform="rotate(202.5 130 130)"/>
+        <path d="M130 98 C139 86, 139 74, 130 64 C121 74, 121 86, 130 98 Z" transform="rotate(247.5 130 130)"/>
+        <path d="M130 98 C139 86, 139 74, 130 64 C121 74, 121 86, 130 98 Z" transform="rotate(292.5 130 130)"/>
+        <path d="M130 98 C139 86, 139 74, 130 64 C121 74, 121 86, 130 98 Z" transform="rotate(337.5 130 130)"/>
+        <circle cx="130" cy="130" r="106"/>
+        <circle cx="130" cy="130" r="60"/>
+      </g>
+    </svg>
     <div class="wrap">
       <svg class="orn rv" viewBox="0 0 240 26" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
         <path d="M0 14 H 86"/><path d="M154 14 H 240"/>
@@ -872,6 +1253,8 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     </div>
   </section>
 
+  <div class="garad" aria-hidden="true"></div>
+
   <!-- CLOSING -->
   <section class="closing">
     <div class="wrap">
@@ -926,22 +1309,25 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     },1800);
   }
 
-  /* ---------- palette (persists) ---------- */
+  /* ---------- palette: one toggle, persists ---------- */
   function syncPaletteButtons(){
     var mauve=root.getAttribute('data-palette')==='mauve';
+    var bn=root.getAttribute('data-lang')==='bn';
+    var label=mauve
+      ? (bn?'বাঙালি রঙে ফিরে যান':'Switch to the Bengali look')
+      : (bn?'মভ রঙে দেখুন':'Switch to the mauve look');
     each('[data-palette-btn]',function(b){
-      b.setAttribute('aria-pressed',String((b.getAttribute('data-palette-btn')==='mauve')===mauve));
+      b.setAttribute('title',label);
+      b.setAttribute('aria-label',label);
     });
   }
   each('[data-palette-btn]',function(btn){
     btn.addEventListener('click',function(){
-      var want=btn.getAttribute('data-palette-btn');
-      var isMauve=root.getAttribute('data-palette')==='mauve';
-      if((want==='mauve')===isMauve)return;      /* already on it */
+      var goingMauve=root.getAttribute('data-palette')!=='mauve';
       morph(function(){
-        if(want==='mauve')root.setAttribute('data-palette','mauve');
+        if(goingMauve)root.setAttribute('data-palette','mauve');
         else root.removeAttribute('data-palette');
-        save('suro-palette',want);
+        save('suro-palette',goingMauve?'mauve':'bengali');
         syncPaletteButtons();
       });
     });
@@ -1052,6 +1438,7 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     root.setAttribute('data-lang',bn?'en':'bn');
     root.setAttribute('lang',bn?'en':'bn');
     syncModeLabel();
+    syncPaletteButtons();
   }
   each('[data-lang-btn]',function(btn){
     btn.addEventListener('click',function(){
@@ -1146,21 +1533,98 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     Array.prototype.forEach.call(vids,function(v){attach(v);v.setAttribute('controls','')});
   }
 
-  /* ---------- falling petals, tinted by the live palette ---------- */
+  /* ---------- toran ----------
+     Built at the real viewport width. A fixed viewBox stretched with
+     preserveAspectRatio would squash the marigolds into ellipses on desktop. */
+  function buildToran(){
+    var host=document.querySelector('.toran');
+    if(!host)return;
+    var w=Math.max(320,window.innerWidth),h=104,sag=30,step=30;
+    function ropeY(x){return 6+sag*Math.sin(Math.PI*x/w)}
+    var d='M0 6';
+    for(var x=12;x<=w;x+=12)d+=' L'+x+' '+ropeY(x).toFixed(1);
+    var n=Math.floor(w/step),pad=(w-n*step)/2;
+    var s='<svg viewBox="0 0 '+w+' '+h+'" width="'+w+'" height="'+h+'">'+
+      '<path d="'+d+'" fill="none" stroke="var(--leaf)" stroke-width="1.6" opacity=".6"/>'+
+      '<path d="'+d+'" fill="none" stroke="var(--gold)" stroke-width=".8" opacity=".4" transform="translate(0,3.5)"/>';
+    for(var i=0;i<=n;i++){
+      var cx=+(i*step+pad).toFixed(1),y=+ropeY(cx).toFixed(1);
+      if(i%2===0){
+        s+='<g class="hang"><path d="M'+cx+' '+(y+4)+
+           ' C'+(cx-7.5)+' '+(y+17)+' '+(cx-7.5)+' '+(y+31)+' '+cx+' '+(y+41)+
+           ' C'+(cx+7.5)+' '+(y+31)+' '+(cx+7.5)+' '+(y+17)+' '+cx+' '+(y+4)+
+           ' Z" fill="var(--leaf)" opacity=".6"/>'+
+           '<path d="M'+cx+' '+(y+6)+' V'+(y+39)+'" stroke="var(--bg)" stroke-width=".8" opacity=".45"/></g>';
+      }else{
+        s+='<g class="hang"><path d="M'+cx+' '+(y+3)+' V'+(y+8)+'" stroke="var(--leaf)" stroke-width="1" opacity=".6"/>'+
+           '<circle cx="'+cx+'" cy="'+(y+15)+'" r="7.2" fill="var(--gold)" opacity=".8"/>'+
+           '<circle cx="'+cx+'" cy="'+(y+15)+'" r="3.4" fill="var(--accent)" opacity=".42"/></g>';
+      }
+    }
+    host.innerHTML=s+'</svg>';
+  }
+  buildToran();
+  var toranTimer=null;
+  window.addEventListener('resize',function(){
+    clearTimeout(toranTimer);
+    toranTimer=setTimeout(buildToran,180);
+  });
+
+  /* ---------- falling shiuli, marigold and bel leaves ----------
+     Shiuli is the Bengali autumn flower: white petals, orange stem.
+     It needs a faint outline or it disappears against cream paper. */
+  function flower(kind,cs){
+    var gold=cs.getPropertyValue('--gold').trim();
+    var goldL=cs.getPropertyValue('--gold-l').trim();
+    var leaf=cs.getPropertyValue('--leaf').trim();
+    var accent=cs.getPropertyValue('--accent-l').trim();
+    if(kind==='marigold'){
+      return '<svg viewBox="0 0 24 24">'+
+        '<circle cx="12" cy="12" r="10.5" fill="#c9591b"/>'+
+        '<circle cx="12" cy="12" r="7.4" fill="'+gold+'"/>'+
+        '<circle cx="12" cy="12" r="4" fill="'+goldL+'" opacity=".9"/>'+
+        '<circle cx="12" cy="12" r="1.8" fill="'+accent+'"/></svg>';
+    }
+    if(kind==='jaba'){
+      /* red hibiscus - five broad petals and the long protruding stamen */
+      var pet='';
+      for(var j=0;j<5;j++){
+        pet+='<ellipse cx="12" cy="7.4" rx="4.2" ry="4.8" transform="rotate('+(j*72)+' 12 12)"/>';
+      }
+      return '<svg viewBox="0 0 24 24">'+
+        '<g fill="#b3121d" opacity=".92">'+pet+'</g>'+
+        '<circle cx="12" cy="12" r="2.6" fill="#7d0a13"/>'+
+        '<path d="M12 12 L19 19.5" stroke="'+goldL+'" stroke-width="1.1" stroke-linecap="round"/>'+
+        '<circle cx="19.4" cy="19.9" r="1.5" fill="'+goldL+'"/></svg>';
+    }
+    if(kind==='leaf'){
+      return '<svg viewBox="0 0 24 24">'+
+        '<path d="M12 1.5 C19 7 19 17 12 22.5 C5 17 5 7 12 1.5 Z" fill="'+leaf+'" opacity=".8"/>'+
+        '<path d="M12 3 V21" stroke="'+goldL+'" stroke-width="1" opacity=".55"/></svg>';
+    }
+    var pet='';
+    for(var a=0;a<6;a++){
+      pet+='<ellipse cx="12" cy="6.6" rx="3.1" ry="5.4" transform="rotate('+(a*60)+' 12 12)"/>';
+    }
+    return '<svg viewBox="0 0 24 24">'+
+      '<g fill="#fffaf0" stroke="'+goldL+'" stroke-width=".55" opacity=".95">'+pet+'</g>'+
+      '<circle cx="12" cy="12" r="3" fill="#e07b2a"/></svg>';
+  }
+
   function paintPetals(){
     if(reduce)return;
     var box=document.getElementById('petals');
     var cs=getComputedStyle(root);
-    var cols=['--accent-l','--gold','--gold-l','--leaf-l','--accent-wash','--gold-wash']
-      .map(function(n){return cs.getPropertyValue(n).trim()}).filter(Boolean);
+    var kinds=['marigold','marigold','jaba','jaba','jaba','shiuli','shiuli','leaf'];
     box.innerHTML='';
-    for(var i=0;i<26;i++){
+    for(var i=0;i<24;i++){
       var p=document.createElement('div');
       p.className='petal';
-      var s=5+Math.random()*11;
-      p.style.cssText='left:'+(Math.random()*100)+'%;width:'+s+'px;height:'+(s*0.72)+'px;'+
-        'background:'+cols[Math.floor(Math.random()*cols.length)]+';'+
+      var kind=kinds[Math.floor(Math.random()*kinds.length)];
+      var s=(kind==='leaf'?7:9)+Math.random()*10;
+      p.style.cssText='left:'+(Math.random()*100)+'%;width:'+s+'px;height:'+s+'px;'+
         'animation-duration:'+(17+Math.random()*17)+'s;animation-delay:'+(Math.random()*22)+'s;';
+      p.innerHTML=flower(kind,cs);
       box.appendChild(p);
     }
   }
