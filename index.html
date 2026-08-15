@@ -729,7 +729,14 @@ html[data-lang="bn"] .ganesha-say{
   .toran .hang,.diya .flame,.diya-glow,.hdiya,.hdiya .flame,.hdiya-glow{animation:none}
 }
 
-/* the 2 second alpona transition between intro and invitation */
+/* =========================================================
+   THE 3 SECOND OPENING SEQUENCE
+   0.15-1.40s  alpona draws, a glowing point traces it
+   1.40-1.90s  the seal stamps down into the centre
+   1.90-2.40s  the petals fill with colour from the impact
+   2.30-3.00s  sindoor blooms and petals burst outward
+   3.00s       invitation revealed, veil clears over 0.45s
+   ========================================================= */
 #veil{
   position:fixed;inset:0;z-index:950;
   display:grid;place-items:center;
@@ -738,10 +745,93 @@ html[data-lang="bn"] .ganesha-say{
   transition:opacity .5s ease,visibility 0s .5s;
 }
 #veil.on{opacity:1;visibility:visible;transition:opacity .45s ease}
-#veil svg{width:min(300px,62vw);color:var(--accent-l)}
-#veil.on path,#veil.on circle{
+.veil-stage{position:relative;width:min(300px,62vw);aspect-ratio:1;display:grid;place-items:center}
+.veil-alpona{width:100%;color:var(--accent-l)}
+
+/* the outline drawing itself */
+#veil.on .veil-alpona .vp,
+#veil.on .veil-alpona .vc{
   stroke-dasharray:340;stroke-dashoffset:340;
-  animation:draw 1.5s cubic-bezier(.4,0,.2,1) forwards;
+  animation:draw 1.25s cubic-bezier(.4,0,.2,1) .15s forwards;
+}
+/* then the petals wash with colour, radiating from the centre */
+#veil.on .veil-alpona .vp{
+  fill:var(--accent);fill-opacity:0;
+  animation:draw 1.25s cubic-bezier(.4,0,.2,1) .15s forwards,
+            petalFill .55s ease-out 1.9s forwards;
+}
+#veil.on .veil-alpona .vp:nth-of-type(2){animation-delay:.15s,1.96s}
+#veil.on .veil-alpona .vp:nth-of-type(3){animation-delay:.15s,2.02s}
+#veil.on .veil-alpona .vp:nth-of-type(4){animation-delay:.15s,2.08s}
+#veil.on .veil-alpona .vp:nth-of-type(5){animation-delay:.15s,2.14s}
+#veil.on .veil-alpona .vp:nth-of-type(6){animation-delay:.15s,2.20s}
+@keyframes petalFill{to{fill-opacity:.30}}
+
+/* the point that traces the alpona as it is drawn */
+.veil-tracer{transform-box:view-box;transform-origin:130px 130px;opacity:0}
+#veil.on .veil-tracer{animation:tracerSpin 1.25s cubic-bezier(.4,0,.2,1) .15s forwards}
+@keyframes tracerSpin{
+  0%{opacity:0;transform:rotate(0deg)}
+  10%{opacity:1}
+  85%{opacity:1}
+  100%{opacity:0;transform:rotate(360deg)}
+}
+
+/* the seal pressing down like a wax stamp */
+.veil-stamp{
+  position:absolute;left:50%;top:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:clamp(11px,2.8vw,19px) clamp(18px,4.6vw,33px);
+  border:1.5px solid var(--gold-l);border-radius:50%;
+  background:
+    radial-gradient(ellipse 60% 55% at 38% 26%,rgba(255,255,255,.20),transparent 60%),
+    radial-gradient(ellipse 90% 90% at 50% 56%,var(--band-b),var(--band-a) 82%);
+  box-shadow:inset 0 2px 7px rgba(255,255,255,.20),inset 0 -8px 18px rgba(0,0,0,.32),0 10px 26px var(--shadow);
+  opacity:0;transform:translate(-50%,-50%) scale(2.6);
+}
+#veil.on .veil-stamp{
+  animation:stampIn .5s cubic-bezier(.25,1.5,.5,1) 1.4s both,
+            stampOut .55s ease 2.35s forwards;
+}
+@keyframes stampIn{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(2.6) rotate(-9deg)}
+  50%{opacity:1}
+  76%{transform:translate(-50%,-50%) scale(.9) rotate(1deg)}
+  100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0)}
+}
+@keyframes stampOut{to{opacity:0}}
+
+/* sindoor blooming out of the impact */
+.veil-bloom{
+  position:absolute;left:50%;top:50%;width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle,rgba(var(--rose-a),.85),rgba(var(--rose-a),.25) 45%,transparent 70%);
+  opacity:0;transform:translate(-50%,-50%) scale(.2);
+}
+#veil.on .veil-bloom{animation:veilBloom .72s cubic-bezier(.25,.7,.3,1) 2.3s forwards}
+@keyframes veilBloom{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}
+  22%{opacity:.8}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(3.4)}
+}
+
+/* petals thrown outward as it opens */
+.veil-burst{position:absolute;left:50%;top:50%;width:0;height:0}
+.vb{
+  position:absolute;left:0;top:0;width:11px;height:11px;opacity:0;
+  transform:translate(-50%,-50%) rotate(var(--a)) translateX(0) scale(.4);
+}
+#veil.on .vb{animation:veilBurst .68s cubic-bezier(.2,.7,.3,1) 2.35s forwards}
+@keyframes veilBurst{
+  0%{opacity:0;transform:translate(-50%,-50%) rotate(var(--a)) translateX(0) scale(.4)}
+  18%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-50%) rotate(var(--a)) translateX(var(--d)) scale(1.15)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  #veil.on .veil-alpona .vp,#veil.on .veil-alpona .vc,
+  #veil.on .veil-tracer,#veil.on .veil-stamp,
+  #veil.on .veil-bloom,#veil.on .vb{animation:none}
+  #veil.on .veil-alpona .vp,#veil.on .veil-alpona .vc{stroke-dashoffset:0}
 }
 
 /* =========================================================
@@ -1240,18 +1330,28 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
 
 <!-- 2 second alpona transition -->
 <div id="veil" aria-hidden="true">
-  <svg viewBox="0 0 260 260">
-    <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
-      <path d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z"/>
-      <path d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(60 130 130)"/>
-      <path d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(120 130 130)"/>
-      <path d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(180 130 130)"/>
-      <path d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(240 130 130)"/>
-      <path d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(300 130 130)"/>
-      <circle cx="130" cy="130" r="78"/>
-      <circle cx="130" cy="130" r="34"/>
-    </g>
-  </svg>
+  <div class="veil-stage">
+    <svg class="veil-alpona" viewBox="0 0 260 260">
+      <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+        <path class="vp" d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z"/>
+        <path class="vp" d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(60 130 130)"/>
+        <path class="vp" d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(120 130 130)"/>
+        <path class="vp" d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(180 130 130)"/>
+        <path class="vp" d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(240 130 130)"/>
+        <path class="vp" d="M130 62 C144 40, 144 22, 130 8 C116 22, 116 40, 130 62 Z" transform="rotate(300 130 130)"/>
+        <circle class="vc" cx="130" cy="130" r="78"/>
+        <circle class="vc" cx="130" cy="130" r="34"/>
+      </g>
+      <g class="veil-tracer">
+        <circle cx="130" cy="52" r="9" fill="var(--gold)" opacity=".28"/>
+        <circle cx="130" cy="52" r="3.6" fill="#fff4d8"/>
+      </g>
+    </svg>
+
+    <div class="veil-stamp"><span class="suro-text"><span class="hash">#</span>SuRo</span></div>
+    <div class="veil-bloom"></div>
+    <div class="veil-burst" id="veilBurst"></div>
+  </div>
 </div>
 
 <!-- =========================================================
@@ -1751,7 +1851,7 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       window.scrollTo(0,0);
       veil.classList.remove('on');
       observeAll();
-    },reduce?300:2000);
+    },reduce?300:3000);
   });
 
   /* ---------- scroll reveal ---------- */
@@ -1837,6 +1937,25 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       b.innerHTML=flower('jaba',cs);
     });
   }
+
+  /* ---------- petals thrown outward when the veil opens ---------- */
+  (function(){
+    var host=document.getElementById('veilBurst');
+    if(!host||reduce)return;
+    var cs=getComputedStyle(root);
+    var kinds=['jaba','jaba','marigold','marigold','shiuli','leaf'];
+    for(var i=0;i<16;i++){
+      var p=document.createElement('div');
+      p.className='vb';
+      var ang=(360/16)*i+(Math.random()*14-7);
+      var dist=70+Math.random()*80;
+      var s=8+Math.random()*7;
+      p.style.cssText='--a:'+ang.toFixed(1)+'deg;--d:'+dist.toFixed(0)+'px;'+
+        'width:'+s+'px;height:'+s+'px;animation-delay:'+(2.35+Math.random()*0.14).toFixed(2)+'s;';
+      p.innerHTML=flower(kinds[i%kinds.length],cs);
+      host.appendChild(p);
+    }
+  })();
 
   /* ---------- centre the rotating alpona on the seal ----------
      Sized to the clear gap between the Ganesha group above and the invite
