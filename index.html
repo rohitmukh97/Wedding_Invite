@@ -25,7 +25,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23fbf6ee'/%3E%3Cpath d='M16 6 C21 11, 21 21, 16 26 C11 21, 11 11, 16 6 Z' fill='none' stroke='%23a4161a' stroke-width='1.6'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23c79a3a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500&family=Pinyon+Script&family=Noto+Serif+Bengali:wght@400;500;600&family=Hind+Siliguri:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500;1,600&family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500&family=Pinyon+Script&family=Noto+Serif+Bengali:wght@400;500;600&family=Great+Vibes&family=Hind+Siliguri:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 /* =========================================================
    Susmita & Rohit - 4 & 5 December 2026 - Kolkata
@@ -85,7 +85,13 @@
   --rose-a:190,134,200; --rose-b:208,160,216; --rose-k:1.5;
 }
 
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html{
+  scroll-behavior:smooth;-webkit-text-size-adjust:100%;
+  /* Sub-pixel rounding (the toran is built at a fractional innerWidth) leaves
+     a ~2px overscroll on Chrome Android. clip, not hidden: overflow-x:hidden
+     on html makes it a scroll container and breaks the sticky bar. */
+  overflow-x:clip;
+}
 body{
   background:var(--bg); color:var(--ink);
   font-family:'Montserrat',-apple-system,BlinkMacSystemFont,sans-serif;
@@ -254,7 +260,7 @@ html[data-lang="en"] .ctl-lang .glyph-en{opacity:0;transform:scale(.7)}
 /* The small lines sit over alpona petals and pulse rings. Stacked shadows in
    the page colour knock a clean halo out around each glyph, so the decoration
    can stay busy without the text becoming unreadable. */
-.intro-eyebrow,.ganesha-say,.intro-date,.intro-hint{
+.intro-eyebrow,.ganesha-say,.intro-date,.intro-hint,.invite-lead{
   text-shadow:
     0 0 6px var(--bg),0 0 6px var(--bg),0 0 10px var(--bg),
     0 0 16px var(--bg),0 0 26px var(--bg);
@@ -322,8 +328,10 @@ html[data-lang="bn"] .intro-eyebrow{letter-spacing:.1em;text-transform:none;font
 }
 .suro-btn:active{transform:scale(.985)}
 
-/* the whole seal breathes, so it reads as something alive to press */
-.suro-holder{animation:breathe 4.4s ease-in-out 1.9s infinite}
+/* the whole seal breathes, so it reads as something alive to press.
+   The bottom margin lifts it off centre, which buys the rotating ring room
+   now that the stacked names take up more of the lower half. */
+.suro-holder{margin-bottom:86px;animation:breathe 4.4s ease-in-out 1.9s infinite}
 @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.028)}}
 
 /* rings pulsing outward from the seal - the tap affordance */
@@ -350,14 +358,73 @@ html[data-lang="bn"] .intro-eyebrow{letter-spacing:.1em;text-transform:none;font
 @keyframes pressInk{to{transform:translate(-50%,-50%) scale(16);opacity:0}}
 @keyframes riseIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
-.intro-line{
+/* the lead-in shrinks right down so the names can dominate */
+.invite-lead{
   position:relative;z-index:2;text-align:center;
-  font-family:'Cormorant Garamond',serif;font-style:italic;
-  font-size:clamp(19px,4.6vw,25px);color:var(--ink-2);
-  margin-top:0;
+  font-family:'Montserrat',sans-serif;font-weight:400;
+  font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 14px;
   animation:riseIn 1.3s ease-out .3s both;
 }
-html[data-lang="bn"] .intro-line{font-family:'Noto Serif Bengali',serif;font-style:normal;font-size:clamp(17px,4.2vw,21px)}
+html[data-lang="bn"] .invite-lead{
+  font-family:'Hind Siliguri',sans-serif;
+  letter-spacing:.06em;text-transform:none;font-size:15px;
+}
+
+/* names stacked, so each gets the full width to itself */
+.invite-names{
+  position:relative;z-index:2;text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  animation:riseIn 1.3s ease-out .42s both;
+}
+/* Great Vibes is a formal script: it only ships one weight, its letterforms
+   are much smaller than the em box, and its ascenders and descenders are
+   long. So it needs a bigger size and a tighter line-height than a serif
+   would at the same nominal value. */
+.invite-names .nm{
+  font-family:'Great Vibes',cursive;
+  font-style:normal;font-weight:400;
+  font-size:clamp(40px,12.6vw,60px);
+  /* The line box must enclose the ink. background-clip:text paints the
+     gradient only inside the element's box, so a tight line-height on a
+     script with tall ascenders leaves the tops of the glyphs unpainted -
+     which reads as the letters being cut off. Negative margin pulls the
+     two names back together without shrinking the box. */
+  line-height:1.44;padding:.04em 0;margin:-.13em 0;
+  letter-spacing:.01em;color:var(--gold-l);
+}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .invite-names .nm{
+    background-image:linear-gradient(100deg,#c69433 0%,#f0d795 30%,#fff6dc 50%,#f0d795 70%,#c69433 100%);
+    background-size:230% 100%;
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+    animation:foil 11s ease-in-out infinite;
+  }
+}
+/* Bengali stays upright: Noto Serif Bengali has no italic, so an italic
+   request would be synthesised as a slant, which is wrong for the script. */
+html[data-lang="bn"] .invite-names .nm{
+  font-family:'Noto Serif Bengali',serif;
+  font-style:normal;font-weight:500;
+  font-size:clamp(26px,8vw,39px);line-height:1.45;
+}
+
+/* the ampersand, flanked by two small buds */
+.invite-names .amp{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  width:min(230px,62vw);height:22px;margin:3px 0;color:var(--gold);
+}
+.invite-names .amp-orn{position:absolute;inset:0;width:100%;height:100%;opacity:.75}
+.invite-names .amp-ch{
+  position:relative;
+  font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;
+  font-size:25px;line-height:1;color:var(--accent-d);
+  padding:0 9px;
+}
+html[data-lang="bn"] .invite-names .amp-ch{
+  font-family:'Noto Serif Bengali',serif;font-style:normal;font-size:19px;
+}
 .intro-date{
   position:relative;z-index:2;
   font-size:10px;letter-spacing:.34em;text-transform:uppercase;
@@ -1314,10 +1381,22 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     </svg>
     <span class="en">Tap #SuRo to open</span><span class="bn">খুলতে #SuRo-তে ট্যাপ করুন</span>
   </p>
-  <p class="intro-line">
-    <span class="en">You are invited to the marriage of <br>Susmita Basak &amp; Rohit Mukherjee</span>
-    <span class="bn">আপনাকে আমন্ত্রণ জানাই <br>সুস্মিতা বসাক ও রোহিত মুখার্জীর শুভ বিবাহে</span>
+  <p class="invite-lead">
+    <span class="en">You are invited to the marriage of</span>
+    <span class="bn">আপনাকে আমন্ত্রণ জানাই</span>
   </p>
+  <div class="invite-names">
+    <span class="nm"><span class="en">Susmita Basak</span><span class="bn">সুস্মিতা বসাক</span></span>
+    <span class="amp" aria-hidden="true">
+      <svg viewBox="0 0 120 22" class="amp-orn"><g fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
+        <path d="M2 11 H36"/><path d="M84 11 H118"/>
+        <path d="M42 11 C42 7 45 4.5 48 6.5 C50.5 8 49.5 12 46.5 13.5 C43.5 15 42 13 42 11 Z" opacity=".8"/>
+        <path d="M78 11 C78 7 75 4.5 72 6.5 C69.5 8 70.5 12 73.5 13.5 C76.5 15 78 13 78 11 Z" opacity=".8"/>
+      </g></svg>
+      <b class="amp-ch"><span class="en">&amp;</span><span class="bn">ও</span></b>
+    </span>
+    <span class="nm"><span class="en">Rohit Mukherjee</span><span class="bn">রোহিত মুখার্জী</span></span>
+  </div>
   <p class="intro-date"><span class="en">4 &amp; 5 December 2026 &middot; Kolkata</span><span class="bn">৪ ও ৫ ডিসেম্বর ২০২৬ &middot; কলকাতা</span></p>
   </div>
   <div class="ctl-row intro-ctl">
@@ -1972,9 +2051,13 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     var below=document.querySelector('.intro-lower');
     var topLimit=above?above.getBoundingClientRect().bottom-ib.top:0;
     var botLimit=below?below.getBoundingClientRect().top-ib.top:ib.height;
-    var pad=14;
+    var pad=12;
+    /* No floor. A minimum radius can only be honoured by overlapping the
+       text, which is exactly what we are avoiding - so if the clear gap is
+       too small to hold a meaningful ring, hide it instead. */
     var radius=Math.min(cy-topLimit-pad, botLimit-cy-pad, ib.width*0.46);
-    radius=Math.max(radius,90);
+    if(radius<52){a.style.display='none';return}
+    a.style.display='';
 
     a.style.width=(radius*2)+'px';
     a.style.left=cx+'px';
