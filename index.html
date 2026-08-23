@@ -214,8 +214,14 @@ html[data-lang="en"] .ctl-lang .glyph-en{opacity:0;transform:scale(.7)}
    ========================================================= */
 #intro{
   position:fixed;inset:0;z-index:900;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:40px 22px;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  /* Start-aligned, with auto margins on the first and last children doing the
+     centring. justify-content:center overflows symmetrically once content
+     outgrows the box; autos collapse to zero instead, so a short screen
+     degrades downward. padding-top reserves the toran, padding-bottom the
+     language button. Browser chrome takes ~180px of a phone's height, so a
+     "852px" iPhone really has about 669px to work with. */
+  padding:calc(112px + env(safe-area-inset-top)) 22px calc(84px + env(safe-area-inset-bottom));
   background:radial-gradient(ellipse at 50% 38%,var(--bg-3),var(--bg) 62%);
   transition:opacity 1.1s ease,visibility 0s 1.1s;
 }
@@ -268,8 +274,11 @@ html[data-lang="en"] .ctl-lang .glyph-en{opacity:0;transform:scale(.7)}
 }
 /* the invitation lines and the date, pinned to the lower part of the screen */
 .intro-lower{
-  position:absolute;left:0;right:0;bottom:116px;
-  z-index:2;text-align:center;
+  position:relative;z-index:2;text-align:center;width:100%;
+  margin-bottom:auto;
+  /* full-width text block with nothing clickable in it: without this it sits
+     over the seated diyas and swallows their taps */
+  pointer-events:none;
 }
 html[data-lang="bn"] .intro-eyebrow{letter-spacing:.1em;text-transform:none;font-size:13px}
 
@@ -325,7 +334,7 @@ html[data-lang="bn"] .intro-eyebrow{letter-spacing:.1em;text-transform:none;font
 /* the whole seal breathes, so it reads as something alive to press.
    The bottom margin lifts it off centre, which buys the rotating ring room
    now that the stacked names take up more of the lower half. */
-.suro-holder{margin-bottom:140px;animation:breathe 4.4s ease-in-out 1.9s infinite}
+.suro-holder{margin:clamp(16px,6.4vh,58px) 0;animation:breathe 4.4s ease-in-out 1.9s infinite}
 @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.028)}}
 
 /* rings pulsing outward from the seal - the tap affordance */
@@ -445,7 +454,7 @@ html[data-lang="bn"] .intro-hint{
 /* Full width and centred by the flex row, not by translateX: riseIn ends on
    transform:none, which would wipe out any transform used for centring. */
 .intro-ctl{
-  position:absolute;left:0;right:0;bottom:38px;
+  position:absolute;left:0;right:0;bottom:28px;
   z-index:3;margin:0;
   animation:riseIn 1.3s ease-out .68s both;
   /* The row spans the full width, so its box sits over both seated diyas and
@@ -585,8 +594,8 @@ html[data-lang="bn"] .intro-hint{
 /* Pinned just under the toran, so the middle of the screen belongs to the
    seal alone. The invocation and eyebrow follow it up there. */
 .ganesha{
-  position:absolute;top:130px;left:0;right:0;
-  z-index:2;text-align:center;margin:0;
+  position:relative;z-index:2;text-align:center;
+  width:100%;margin:auto auto clamp(4px,1.4vh,14px);
 }
 .ganesha svg{width:clamp(62px,18vw,82px);margin:0 auto;color:var(--gold)}
 .ganesha .gj{stroke:var(--accent)}
@@ -606,9 +615,72 @@ html[data-lang="bn"] .ganesha-say{
   font-family:'Noto Serif Bengali',serif;
   letter-spacing:.04em;text-transform:none;font-size:12px;
 }
-@media(max-height:760px){
-  .ganesha{margin-bottom:9px}
-  .ganesha svg{width:clamp(52px,15vw,66px)}
+/* Scale the intro down as the usable height shrinks. Values are tuned
+   against measured content heights at each breakpoint, not guessed. */
+@media(max-height:780px){
+  #intro{padding-top:calc(100px + env(safe-area-inset-top))}
+  .suro-holder{margin:clamp(14px,5vh,42px) 0}
+  .ganesha svg{width:clamp(54px,15vw,68px)}
+  .ganesha-say{font-size:8.5px;letter-spacing:.2em}
+  .hero-eyebrow,.intro-eyebrow{font-size:12px;letter-spacing:.28em;margin-bottom:0}
+  .invite-names .nm{font-size:clamp(30px,9.2vw,40px)}
+  .invite-lead{font-size:10px;letter-spacing:.15em;margin-bottom:8px}
+  .intro-date{margin-top:8px}
+  .intro-hint{margin-bottom:10px}
+}
+@media(max-height:700px){
+  #intro{padding-top:calc(92px + env(safe-area-inset-top))}
+  .invite-names .nm{font-size:clamp(28px,8.6vw,36px);line-height:1.22}
+  .invite-names .amp{height:18px;margin:1px 0}
+  .invite-names .amp-ch{font-size:20px}
+  .suro-holder{margin:clamp(14px,6vh,44px) 0}
+}
+@media(max-height:620px){
+  #intro{padding-top:calc(78px + env(safe-area-inset-top));padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+  .ganesha svg{width:clamp(46px,13vw,58px)}
+  .invite-names .nm{font-size:clamp(26px,8vw,32px);line-height:1.28}
+  .invite-names .amp{height:15px;margin:0}
+  .invite-names .amp-ch{font-size:18px}
+  .intro-hint{font-size:10px;margin-bottom:8px}
+  .intro-date{font-size:9px;margin-top:6px}
+  .suro-text{font-size:clamp(23px,6.2vw,32px)}
+  .suro-btn{padding:9px 16px}
+  .intro-ctl{bottom:20px}
+}
+@media(max-height:560px){
+  #intro{padding-top:calc(64px + env(safe-area-inset-top));padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+  .ganesha svg{width:44px}
+  .ganesha-say{font-size:8px}
+  .invite-names .nm{font-size:24px}
+  .invite-lead{font-size:9px;margin-bottom:6px}
+  .suro-text{font-size:22px}
+  .suro-holder{margin:clamp(10px,3.4vh,24px) 0}
+}
+/* Very old handsets (iPhone SE 1, 360x640 Android): drop the invocation and
+   the tap hint rather than let the block run under the language button. */
+@media(max-height:500px){
+  #intro{padding-top:52px;padding-bottom:calc(62px + env(safe-area-inset-bottom))}
+  .ganesha-say{display:none}
+  .intro-hint{display:none}
+  .ganesha svg{width:40px}
+  .invite-names .nm{font-size:22px}
+  .intro-ctl{bottom:12px}
+}
+/* A phone held sideways has almost no height: keep the seal, the names and
+   the date, drop the supporting lines. */
+@media(max-height:440px){
+  #intro{padding-top:42px;padding-bottom:calc(52px + env(safe-area-inset-bottom))}
+  .ganesha-say,.intro-hint,.invite-lead{display:none}
+  .ganesha svg{width:36px}
+  .hero-eyebrow,.intro-eyebrow{font-size:10px;letter-spacing:.22em}
+  .invite-names .nm{font-size:20px;line-height:1.22}
+  .invite-names .amp{height:13px;margin:0}
+  .invite-names .amp-ch{font-size:16px}
+  .intro-date{font-size:8.5px;margin-top:5px}
+  .suro-text{font-size:19px}
+  .suro-btn{padding:7px 13px}
+  .suro-holder{margin:clamp(6px,2vh,14px) 0}
+  .intro-ctl{bottom:9px}
 }
 
 /* --- shankha and pola, the bride's bangles, ringing the monogram --- */
@@ -845,6 +917,14 @@ html[data-lang="bn"] .ganesha-say{
 /* --- toran: mango leaves and marigolds strung across the top --- */
 .toran{position:absolute;top:13px;left:0;width:100%;height:104px}
 .toran svg{width:100%;height:100%}
+/* These must sit after the base .toran rule: at equal specificity the later
+   declaration wins, so an earlier media query silently loses. */
+@media(max-height:780px){.toran{height:92px}}
+@media(max-height:700px){.toran{height:84px}}
+@media(max-height:620px){.toran{height:70px}}
+@media(max-height:560px){.toran{height:58px}}
+@media(max-height:500px){.toran{height:46px}}
+@media(max-height:440px){.toran{height:38px}}
 .toran .hang{
   transform-box:fill-box;transform-origin:50% 0%;
   animation:sway 4.8s ease-in-out infinite;
@@ -1142,6 +1222,12 @@ html[data-lang="bn"] .film-cap{font-family:'Hind Siliguri',sans-serif;font-style
 /* dates */
 /* countdown, inside the date frame */
 .cd [hidden],.cd[hidden]{display:none!important}
+.date-summary{
+  font-family:'Cormorant Garamond',serif;font-size:16px;line-height:1.85;
+  color:var(--ink-2);margin-top:4px;
+}
+.date-summary b{font-weight:500;color:var(--gold-l)}
+html[data-lang="bn"] .date-summary{font-family:'Hind Siliguri',sans-serif;font-size:14px;line-height:2}
 .cd-rule{width:70%;height:1px;background:var(--line);margin:18px auto 16px}
 .cd-cells{display:flex;justify-content:center;gap:10px}
 .cd-cell{
@@ -1740,9 +1826,11 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
           <div class="date-rule"></div>
           <div class="date-num"><span class="en">04 &amp; 05</span><span class="bn">০৪ ও ০৫</span></div>
         </div>
-        <p class="lede" style="font-size:16px">
-          <span class="en">The wedding itself begins at 6:00 PM on the 5th.</span>
-          <span class="bn">শুভ বিবাহ ৫ তারিখ সন্ধ্যা ৬টা থেকে।</span>
+        <p class="date-summary">
+          <span class="en"><b>Friday the 4th</b> &mdash; Mehendi &amp; Sangeet<br>
+            <b>Saturday the 5th</b> &mdash; Haldi &amp; The Wedding Ceremony</span>
+          <span class="bn"><b>শুক্রবার, ৪ঠা</b> &mdash; মেহেন্দি ও সঙ্গীত<br>
+            <b>শনিবার, ৫ই</b> &mdash; গায়ে হলুদ ও শুভ বিবাহ</span>
         </p>
 
         <div class="cd" id="countdown">
@@ -2430,26 +2518,31 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
   function buildToran(){
     var host=document.querySelector('.toran');
     if(!host)return;
-    var w=Math.max(320,window.innerWidth),h=104,sag=30,step=30;
-    function ropeY(x){return 6+sag*Math.sin(Math.PI*x/w)}
-    var d='M0 6';
+    /* Build to the container's real height so the garland always spans the
+       full width. Scaling a fixed 104-unit viewBox instead would letterbox it
+       (default preserveAspectRatio) or squash the marigolds into ellipses. */
+    var w=Math.max(320,window.innerWidth);
+    var h=Math.round(host.clientHeight)||104, k=h/104;
+    var sag=30*k, step=30;
+    function ropeY(x){return 6*k+sag*Math.sin(Math.PI*x/w)}
+    var d='M0 '+(6*k).toFixed(1);
     for(var x=12;x<=w;x+=12)d+=' L'+x+' '+ropeY(x).toFixed(1);
     var n=Math.floor(w/step),pad=(w-n*step)/2;
     var s='<svg viewBox="0 0 '+w+' '+h+'" width="'+w+'" height="'+h+'">'+
       '<path d="'+d+'" fill="none" stroke="var(--leaf)" stroke-width="1.6" opacity=".6"/>'+
-      '<path d="'+d+'" fill="none" stroke="var(--gold)" stroke-width=".8" opacity=".4" transform="translate(0,3.5)"/>';
+      '<path d="'+d+'" fill="none" stroke="var(--gold)" stroke-width=".8" opacity=".4" transform="translate(0,'+(3.5*k).toFixed(1)+')"/>';
     for(var i=0;i<=n;i++){
       var cx=+(i*step+pad).toFixed(1),y=+ropeY(cx).toFixed(1);
       if(i%2===0){
-        s+='<g class="hang"><path d="M'+cx+' '+(y+4)+
-           ' C'+(cx-7.5)+' '+(y+17)+' '+(cx-7.5)+' '+(y+31)+' '+cx+' '+(y+41)+
-           ' C'+(cx+7.5)+' '+(y+31)+' '+(cx+7.5)+' '+(y+17)+' '+cx+' '+(y+4)+
+        s+='<g class="hang"><path d="M'+cx+' '+(y+4*k)+
+           ' C'+(cx-7.5)+' '+(y+17*k)+' '+(cx-7.5)+' '+(y+31*k)+' '+cx+' '+(y+41*k)+
+           ' C'+(cx+7.5)+' '+(y+31*k)+' '+(cx+7.5)+' '+(y+17*k)+' '+cx+' '+(y+4*k)+
            ' Z" fill="var(--leaf)" opacity=".6"/>'+
-           '<path d="M'+cx+' '+(y+6)+' V'+(y+39)+'" stroke="var(--bg)" stroke-width=".8" opacity=".45"/></g>';
+           '<path d="M'+cx+' '+(y+6*k)+' V'+(y+39*k)+'" stroke="var(--bg)" stroke-width=".8" opacity=".45"/></g>';
       }else{
-        s+='<g class="hang"><path d="M'+cx+' '+(y+3)+' V'+(y+8)+'" stroke="var(--leaf)" stroke-width="1" opacity=".6"/>'+
-           '<circle cx="'+cx+'" cy="'+(y+15)+'" r="7.2" fill="var(--gold)" opacity=".8"/>'+
-           '<circle cx="'+cx+'" cy="'+(y+15)+'" r="3.4" fill="var(--accent)" opacity=".42"/></g>';
+        s+='<g class="hang"><path d="M'+cx+' '+(y+3*k)+' V'+(y+8*k)+'" stroke="var(--leaf)" stroke-width="1" opacity=".6"/>'+
+           '<circle cx="'+cx+'" cy="'+(y+15*k)+'" r="'+(7.2*k).toFixed(1)+'" fill="var(--gold)" opacity=".8"/>'+
+           '<circle cx="'+cx+'" cy="'+(y+15*k)+'" r="'+(3.4*k).toFixed(1)+'" fill="var(--accent)" opacity=".42"/></g>';
       }
     }
     host.innerHTML=s+'</svg>';
