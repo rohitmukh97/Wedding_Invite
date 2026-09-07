@@ -18,10 +18,13 @@
 <meta property="og:title" content="Su&#9825;Ro &mdash; We're getting married">
 <meta property="og:description" content="4 &amp; 5 December 2026 &middot; Kolkata. Mehendi, Sangeet, Haldi and the wedding ceremony.">
 <meta property="og:url" content="https://rohitmukh97.github.io/Wedding_Invite/">
-<meta property="og:image" content="https://rohitmukh97.github.io/Wedding_Invite/assets/img/photo3.jpg">
-<meta property="og:image:width" content="1100">
-<meta property="og:image:height" content="1650">
-<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://rohitmukh97.github.io/Wedding_Invite/assets/img/share-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="1200">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:alt" content="Susmita and Rohit - finally, we're getting married. December 2026, Kolkata.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://rohitmukh97.github.io/Wedding_Invite/assets/img/share-card.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23fbf6ee'/%3E%3Cpath d='M16 6 C21 11, 21 21, 16 26 C11 21, 11 11, 16 6 Z' fill='none' stroke='%23a4161a' stroke-width='1.6'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%23c79a3a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -194,6 +197,20 @@ html[data-lang="bn"] body{font-family:'Hind Siliguri',sans-serif;line-height:1.9
 [data-palette="mauve"] .ctl-palette .ico-rosette{opacity:1;transform:none}
 
 /* day / night crossfade, driven purely by the theme attribute */
+/* ---------- the sound toggle ----------
+   One icon, not two: the waves fade out and the cross fades in, so the button
+   never changes size or jumps. */
+.ctl-sound .wave,.ctl-sound .mute-x{transition:opacity .45s ease,transform .45s cubic-bezier(.22,.61,.36,1)}
+.ctl-sound .mute-x{opacity:0;transform:scale(.6);transform-origin:18px 12px}
+.ctl-sound.is-off .wave{opacity:0;transform:translateX(3px) scale(.7);transform-origin:14px 12px}
+.ctl-sound.is-off .mute-x{opacity:1;transform:none}
+.ctl-sound.is-on{color:var(--gold);border-color:var(--gold-l)}
+/* a slow pulse on the outer wave while the song is actually playing, so the
+   button reads as live rather than as a setting */
+.ctl-sound.is-on .wave-2{animation:soundPulse 2.6s ease-in-out infinite}
+@keyframes soundPulse{0%,100%{opacity:1}50%{opacity:.35}}
+@media(prefers-reduced-motion:reduce){.ctl-sound.is-on .wave-2{animation:none}}
+
 .ctl-mode svg{position:absolute;transition:opacity .7s ease,transform .7s cubic-bezier(.22,.61,.36,1)}
 .ctl-mode .ico-moon{opacity:0;transform:rotate(-45deg) scale(.7)}
 [data-theme="dark"] .ctl-mode .ico-sun{opacity:0;transform:rotate(45deg) scale(.7)}
@@ -627,6 +644,8 @@ html[data-lang="bn"] .ganesha-say{
   .suro-holder{margin:clamp(12px,3.4vh,30px) 0}
   .ganesha svg{width:clamp(54px,15vw,68px)}
   .ganesha-say{font-size:8.5px;letter-spacing:.2em}
+  .ganesha-say-2{font-size:7.8px;min-height:17px;margin-top:0}
+  html[data-lang="bn"] .ganesha-say-2{font-size:10px;min-height:18px}
   .hero-eyebrow,.intro-eyebrow{font-size:12px;letter-spacing:.28em;margin-bottom:0}
   .invite-names .nm{font-size:clamp(30px,9.2vw,36px)}
   .invite-lead{font-size:10px;letter-spacing:.15em;margin-bottom:8px}
@@ -638,7 +657,7 @@ html[data-lang="bn"] .ganesha-say{
   .invite-names .nm{font-size:clamp(28px,8.6vw,36px);line-height:1.22}
   .invite-names .amp{height:18px;margin:1px 0}
   .invite-names .amp-ch{font-size:20px}
-  .suro-holder{margin:clamp(10px,4vh,30px) 0}
+  .suro-holder{margin:clamp(7px,2.7vh,21px) 0}
 }
 @media(max-height:620px){
   #intro{padding-top:calc(78px + env(safe-area-inset-top));padding-bottom:calc(72px + env(safe-area-inset-bottom))}
@@ -650,12 +669,15 @@ html[data-lang="bn"] .ganesha-say{
   .intro-date{font-size:9px;margin-top:6px}
   .suro-text{font-size:clamp(23px,6.2vw,32px)}
   .suro-btn{padding:9px 16px}
-  .intro-ctl{bottom:20px}
+  .suro-holder{margin:clamp(5px,1.7vh,13px) 0}
+  .intro-ctl{bottom:16px}
 }
 @media(max-height:560px){
   #intro{padding-top:calc(50px + env(safe-area-inset-top));padding-bottom:calc(46px + env(safe-area-inset-bottom))}
   .ganesha svg{width:44px}
   .ganesha-say{font-size:8px}
+  .ganesha-say-2{font-size:7.4px;min-height:15px}
+  html[data-lang="bn"] .ganesha-say-2{font-size:9.5px;min-height:16px}
   .invite-names .nm{font-size:22px}
   .invite-lead{font-size:9px;margin-bottom:6px}
   .suro-text{font-size:22px}
@@ -1017,6 +1039,13 @@ html[data-lang="bn"] .ganesha-say{
   transition:opacity .45s ease,visibility 0s .45s;
 }
 #veil.on{opacity:1;visibility:visible;transition:opacity .1s ease}
+/* Dropping .on to hide the veil un-matches every "#veil.on ..." animation
+   below, so the drapes lose their forwards end-state and snap back to
+   covering the screen - the closed curtain then flashes for the length of the
+   fade. .on stays put; this fades the whole layer out instead. Must sit after
+   the .on rule: same specificity, so the later one wins. */
+#veil.done{opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .4s ease,visibility 0s .4s}
 
 /* the two halves */
 .drape{
@@ -1108,6 +1137,11 @@ html[data-lang="bn"] .ganesha-say{
    reserved height the Ganesha block grows and pushes the seal down when the
    language is switched - 23px on a laptop. Fixed minimums keep it still. */
 .ganesha-say{min-height:23px}
+/* The card carries two invocations. The second sits tight under the first and
+   reserves less height - stacking them at full size pushed the date line into
+   the language button on every screen under about 670px. */
+.ganesha-say-2{margin-top:1px;min-height:19px;font-size:8.2px;opacity:.92}
+html[data-lang="bn"] .ganesha-say-2{font-size:11px;min-height:21px}
 .intro-eyebrow{min-height:25px}
 /* Same reasoning for the lines below the seal: Bengali renders each of these
    taller, and without a reserved height every line under them slides down
@@ -1223,20 +1257,6 @@ html[data-lang="bn"] .hero-when{font-family:'Noto Serif Bengali',serif;letter-sp
 
 /* story */
 
-/* film band */
-.film{width:min(620px,100% - 44px);margin:0 auto;position:relative}
-.film video{
-  width:100%;height:auto;aspect-ratio:848/478;
-  border-radius:10px;background:#141010;
-  box-shadow:0 20px 46px var(--shadow);
-}
-.film::after{
-  content:"";position:absolute;inset:-11px;
-  border:1px solid var(--gold);opacity:.4;border-radius:18px;pointer-events:none;
-}
-.film-cap{text-align:center;margin-top:16px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--ink-3)}
-html[data-lang="bn"] .film-cap{font-family:'Hind Siliguri',sans-serif;font-style:normal;font-size:14px}
-
 /* dates */
 /* countdown, inside the date frame */
 .cd [hidden],.cd[hidden]{display:none!important}
@@ -1285,6 +1305,12 @@ html[data-lang="bn"] .date-day{letter-spacing:.06em;text-transform:none;font-siz
 .date-main{display:flex;align-items:center;justify-content:center;gap:18px;margin:12px 0 10px}
 .date-mon{font-family:'Cinzel',serif;font-size:clamp(17px,4vw,22px);letter-spacing:.1em;color:var(--accent-d)}
 .date-yr{font-size:10px;letter-spacing:.4em;color:var(--ink-3);margin-top:4px}
+/* The Bengali calendar date from the printed card. English gets it
+   transliterated so the English screen stays English; the Bengali script
+   itself only appears once the language is switched. */
+.date-bengali{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--gold-l);
+  text-align:center;margin-top:2px;letter-spacing:.02em}
+html[data-lang="bn"] .date-bengali{font-family:'Noto Serif Bengali',serif;font-size:13.5px;letter-spacing:0}
 .date-num{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,11vw,62px);line-height:1;color:var(--accent);white-space:nowrap}
 .date-rule{width:1px;height:56px;background:var(--line)}
 html[data-lang="bn"] .date-mon{font-family:'Noto Serif Bengali',serif}
@@ -1337,20 +1363,47 @@ html[data-lang="bn"] .btn-line{letter-spacing:.03em;text-transform:none;font-siz
 html[data-lang="bn"] .day-head{font-family:'Noto Serif Bengali',serif;letter-spacing:.03em;text-transform:none;font-size:16px}
 .day-gap{height:40px}
 
-/* photo pair + gallery */
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:700px;margin:0 auto}
-.pair img{width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;border-radius:6px;box-shadow:0 14px 32px var(--shadow)}
-.gal{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:760px;margin:0 auto}
-.gal img,.gal video{width:100%;height:auto;object-fit:cover;border-radius:6px;box-shadow:0 12px 28px var(--shadow)}
-.gal img{aspect-ratio:3/4}
-.gal video{aspect-ratio:848/478;background:#141010}
-.gal .span2{grid-column:1/-1}
-@media(min-width:700px){
-  .gal{grid-template-columns:repeat(3,1fr)}
-  .gal .span2{grid-column:span 3}
-}
 
 /* closing */
+/* ---------- THE FAMILIES (from the printed card) ---------- */
+.fam-block{text-align:center;max-width:520px;margin:0 auto}
+.fam-role{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
+.fam-name{font-family:'Great Vibes',cursive;font-size:clamp(32px,8vw,42px);
+  line-height:1.44;padding:.04em 0;margin:-.13em 0 4px;color:var(--gold)}
+.fam-of{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--ink-2);line-height:1.75}
+.fam-sib{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--ink-3);margin-top:3px}
+.fam-join{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;
+  color:var(--gold-l);margin:20px 0 18px;display:flex;align-items:center;justify-content:center;gap:14px}
+.fam-join::before,.fam-join::after{content:"";width:44px;height:1px;background:var(--line)}
+/* Bengali sets its own faces, and letter-spacing breaks its conjuncts apart */
+html[data-lang="bn"] .fam-name{font-family:'Noto Serif Bengali',serif;font-weight:500;
+  font-size:clamp(23px,6vw,30px);line-height:1.6;margin:0 0 4px;padding:0}
+html[data-lang="bn"] .fam-role{letter-spacing:.06em;font-family:'Hind Siliguri',sans-serif}
+html[data-lang="bn"] .fam-of,html[data-lang="bn"] .fam-sib{font-family:'Hind Siliguri',sans-serif;font-size:15px;line-height:1.95}
+html[data-lang="bn"] .fam-join{font-family:'Noto Serif Bengali',serif;font-style:normal;font-size:16px}
+
+/* ---------- THE FORMAL INVITATION (nimantran) ---------- */
+.letter{border:1px solid var(--line);background:rgba(157,15,24,.03);border-radius:4px;
+  padding:clamp(22px,5vw,34px) clamp(18px,4.5vw,32px);max-width:640px;margin:0 auto}
+[data-theme="dark"] .letter{background:rgba(255,255,255,.02)}
+.letter .letter-salut{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;
+  color:var(--accent);margin-bottom:16px;text-align:center}
+.letter p{font-family:'Cormorant Garamond',serif;font-size:17px;line-height:1.9;
+  color:var(--ink-2);margin-bottom:15px;text-align:left}
+.letter .letter-plea{text-align:center;color:var(--gold-l);font-style:italic}
+/* Bengali has no true italic - the browser slants the glyphs and it reads
+   as a rendering fault, so the letter's italics are dropped in Bengali. */
+html[data-lang="bn"] .letter .letter-salut,html[data-lang="bn"] .letter p{
+  font-family:'Hind Siliguri',sans-serif;font-size:15.5px;line-height:2.1;font-style:normal}
+.letter-sign{margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
+/* .letter p sets text-align:left, and element+class outranks a bare class,
+   so the signature has to say it at the same depth to win. */
+.letter .letter-sign p{text-align:center}
+.letter-lab{font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+html[data-lang="bn"] .letter-lab{letter-spacing:.08em;font-family:'Hind Siliguri',sans-serif;font-size:11px}
+.letter-nm{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);line-height:1.8}
+html[data-lang="bn"] .letter-nm{font-family:'Noto Serif Bengali',serif;font-size:16px}
+
 .closing{text-align:center}
 .closing-hash{
   font-family:'Pinyon Script',cursive;font-size:clamp(50px,13vw,86px);
@@ -1645,6 +1698,10 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       <span class="en">Shri Shri Ganeshaya Namah</span>
       <span class="bn">শ্রী শ্রী গণেশায় নমঃ</span>
     </p>
+    <p class="ganesha-say ganesha-say-2">
+      <span class="en">Shree Shree Prajapataye Namah</span>
+      <span class="bn">শ্রী শ্রী প্রজাপতয়ে নমঃ</span>
+    </p>
     <p class="intro-eyebrow"><span class="en">Shubho Bibaho</span><span class="bn">শুভ বিবাহ</span></p>
   </div>
 
@@ -1666,8 +1723,8 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     <span class="en">Tap #SuRo to open</span><span class="bn">খুলতে #SuRo-তে ট্যাপ করুন</span>
   </p>
   <p class="invite-lead">
-    <span class="en">Our two families joyfully invite you to the wedding of</span>
-    <span class="bn">আমাদের দুই পরিবার সানন্দে আমন্ত্রণ জানাচ্ছে</span>
+    <span class="en">The Basak family joyfully invites you to the wedding of</span>
+    <span class="bn">বসাক পরিবার সানন্দে আমন্ত্রণ জানাচ্ছে</span>
   </p>
   <div class="invite-names">
     <span class="nm"><span class="en">Susmita Basak</span><span class="bn">সুস্মিতা বসাক</span></span>
@@ -1690,6 +1747,11 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     </button>
   </div>
 </div>
+
+<!-- The song. Starts on the #SuRo tap - that tap is the user gesture every
+     mobile browser requires before audio may play, so it can never surprise
+     anyone who has not opened the invitation. -->
+<audio id="song" src="assets/audio/song.mp3" loop preload="none"></audio>
 
 <!-- 2 second alpona transition -->
 <div id="veil" aria-hidden="true">
@@ -1738,6 +1800,14 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       <button class="ctl ctl-lang" data-lang-btn type="button" title="Switch to Bengali / বাংলায় দেখুন" aria-label="Switch to Bengali">
         <span class="glyph glyph-bn">অ</span>
         <span class="glyph glyph-en">A</span>
+      </button>
+      <button class="ctl ctl-sound is-on" id="soundBtn" type="button" title="Turn the music off" aria-label="Turn the music off" aria-pressed="true">
+        <svg class="ico-sound" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 9.5h3.2L12 5.4v13.2L7.2 14.5H4z"/>
+          <path class="wave wave-1" d="M15.4 9.6a3.4 3.4 0 0 1 0 4.8"/>
+          <path class="wave wave-2" d="M18 7.2a6.8 6.8 0 0 1 0 9.6"/>
+          <path class="mute-x" d="M15.6 9.8l4.6 4.4M20.2 9.8l-4.6 4.4"/>
+        </svg>
       </button>
     </div>
   </div>
@@ -1788,7 +1858,7 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
   <section style="padding-top:0">
     <div class="wrap">
       <figure class="portrait rv">
-        <img src="assets/img/portrait.jpg" width="1100" height="1466" alt="Susmita and Rohit" loading="lazy" decoding="async">
+        <img src="assets/img/portrait.jpg?v=2" width="1100" height="1464" alt="Susmita and Rohit" loading="lazy" decoding="async">
       </figure>
     </div>
   </section>
@@ -1796,21 +1866,42 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
   <!-- BLESSING -->
   <section class="band">
     <div class="wrap">
-      <p class="kicker rv"><span class="en">Shri Ganeshaya Namaha</span><span class="bn">শ্রী গণেশায় নমঃ</span></p>
+      <p class="kicker rv"><span class="en">Shree Shree Prajapataye Namah</span><span class="bn">শ্রী শ্রী প্রজাপতয়ে নমঃ</span></p>
       <h2 class="h2 rv" style="--d:.06s"><span class="en">Come, and <em>bless them</em></span><span class="bn">আসুন, ওদের <em>আশীর্বাদ</em> করুন</span></h2>
       <p class="lede rv" style="--d:.12s">
-        <span class="en">By the grace of the Almighty and with the blessings of our elders, the Basak and Mukherjee families invite you to Kolkata for two days of celebration. Come with your family, share our sweets, and give the couple your aashirbad as they begin this life together.</span>
-        <span class="bn">ঈশ্বরের কৃপায় ও গুরুজনদের আশীর্বাদে, বসাক ও মুখার্জী পরিবার আপনাকে কলকাতায় দুই দিনের উৎসবে আমন্ত্রণ জানাচ্ছে। সপরিবারে আসুন, মিষ্টিমুখ করুন, আর নবদম্পতিকে আশীর্বাদ করুন তাদের নতুন জীবনের শুরুতে।</span>
+        <span class="en">By the grace of the Almighty and with the blessings of our elders, Sri Ratan Kumar Basak and Smt. Suchitra Basak invite you to Kolkata for two days of celebration, for the wedding of their younger daughter. Come with your family, share our sweets, and give Susmita and Rohit your aashirbad as they begin this life together.</span>
+        <span class="bn">ঈশ্বরের কৃপায় ও গুরুজনদের আশীর্বাদে, শ্রী রতন কুমার বসাক ও শ্রীমতী সুচিত্রা বসাক তাঁদের কনিষ্ঠা কন্যার বিবাহ উপলক্ষে আপনাকে কলকাতায় দুই দিনের উৎসবে আমন্ত্রণ জানাচ্ছেন। সপরিবারে আসুন, মিষ্টিমুখ করুন, আর সুস্মিতা ও রোহিতকে আশীর্বাদ করুন তাদের নতুন জীবনের শুরুতে।</span>
       </p>
     </div>
   </section>
 
-  <!-- FILM 1 -->
-  <section class="band" style="padding-top:clamp(44px,8vw,72px)">
-    <div class="film rv">
-      <video data-autoloop muted loop playsinline preload="none" disableremoteplayback poster="assets/video/film1-poster.jpg" width="848" height="478" aria-label="A short silent clip of Susmita and Rohit"></video>
+  <!-- THE FAMILIES (from the printed card) -->
+  <section class="band">
+    <div class="wrap">
+      <p class="kicker rv"><span class="en">The families</span><span class="bn">পরিচিতি</span></p>
+      <h2 class="h2 rv" style="--d:.06s"><span class="en">With the blessings of <em>our elders</em></span><span class="bn">গুরুজনদের <em>আশীর্বাদে</em></span></h2>
+      <div class="fam-block rv" style="--d:.12s">
+        <p class="fam-role"><span class="en">The bride</span><span class="bn">পাত্রী</span></p>
+        <p class="fam-name"><span class="en">Susmita Basak</span><span class="bn">কল্যাণীয়া সুস্মিতা বসাক</span></p>
+        <p class="fam-of">
+          <span class="en">Younger daughter of Sri Ratan Kumar Basak<br>&amp; Smt. Suchitra Basak</span>
+          <span class="bn">পিতা : শ্রী রতন কুমার বসাক<br>মাতা : শ্রীমতী সুচিত্রা বসাক</span>
+        </p>
+        <p class="fam-sib">
+          <span class="en">Sister of Sri Shibir Basak</span>
+          <span class="bn">ভ্রাতা : শ্রী শিবির বসাক</span>
+        </p>
+
+        <p class="fam-join"><span class="en">with</span><span class="bn">সহিত</span></p>
+
+        <p class="fam-role"><span class="en">The groom</span><span class="bn">পাত্র</span></p>
+        <p class="fam-name"><span class="en">Rohit Mukherjee</span><span class="bn">কল্যাণীয় রোহিত মুখার্জী</span></p>
+        <p class="fam-of">
+          <span class="en">Only son of Sri Subhankar Mukherjee<br>&amp; Smt. Jaishree Mukherjee</span>
+          <span class="bn">পিতা : শ্রী শুভঙ্কর মুখার্জী<br>মাতা : শ্রীমতী জয়শ্রী মুখার্জী</span>
+        </p>
+      </div>
     </div>
-    <p class="film-cap rv" style="--d:.1s"><span class="en">Somewhere along the way</span><span class="bn">পথ চলতে চলতে</span></p>
   </section>
 
   <!-- DATES -->
@@ -1828,11 +1919,12 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
           <div class="date-rule"></div>
           <div class="date-num"><span class="en">04 &amp; 05</span><span class="bn">০৪ ও ০৫</span></div>
         </div>
+        <p class="date-bengali"><span class="en">19th Agrahayan 1433</span><span class="bn">১৯শে অগ্রহায়ণ ১৪৩৩</span></p>
         <p class="date-summary">
-          <span class="en"><b>Friday the 4th</b> &mdash; Mehendi &amp; Sangeet<br>
-            <b>Saturday the 5th</b> &mdash; Haldi &amp; The Wedding Ceremony</span>
-          <span class="bn"><b>শুক্রবার, ৪ঠা</b> &mdash; মেহেন্দি ও সঙ্গীত<br>
-            <b>শনিবার, ৫ই</b> &mdash; গায়ে হলুদ ও শুভ বিবাহ</span>
+          <span class="en"><b>Friday the 4th</b> - Mehendi &amp; Sangeet<br>
+            <b>Saturday the 5th</b> - Haldi &amp; the wedding</span>
+          <span class="bn"><b>শুক্রবার, ৪ঠা</b> - মেহেন্দি ও সঙ্গীত<br>
+            <b>শনিবার, ৫ই</b> - গায়ে হলুদ ও শুভ বিবাহ</span>
         </p>
 
         <div class="cd" id="countdown">
@@ -1871,20 +1963,20 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       <div class="cards">
         <article class="card rv" style="--d:.1s">
           <div class="card-ico"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6 34V18L20 7l14 11v16z"/><path d="M15 34V23h10v11"/><path d="M20 7V3"/><path d="M17 4.6Q20 .8 23 4.6"/></svg></div>
-          <p class="card-for"><span class="en">Mehendi &middot; Sangeet &middot; Gaye Holud</span><span class="bn">মেহেন্দি &middot; সঙ্গীত &middot; গায়ে হলুদ</span></p>
+          <p class="card-for"><span class="en">Mehendi &middot; Sangeet &middot; Haldi</span><span class="bn">মেহেন্দি &middot; সঙ্গীত &middot; গায়ে হলুদ</span></p>
           <h3 class="card-name"><span class="en">Basak Bari</span><span class="bn">বসাক বাড়ি</span></h3>
-          <p class="card-sub"><span class="en">Debendranagar, Kolkata</span><span class="bn">দেবেন্দ্রনগর, কলকাতা</span></p>
+          <p class="card-sub"><span class="en">Debendra Nagar, Kolkata</span><span class="bn">দেবেন্দ্রনগর, কলকাতা</span></p>
           <p class="card-note"><span class="en">The bride&rsquo;s home, where the first three gatherings unfold.</span><span class="bn">কনের বাড়ি, যেখানে প্রথম তিনটি অনুষ্ঠান হবে।</span></p>
         </article>
         <article class="card rv" style="--d:.18s">
           <div class="card-ico"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M7 33V19q0-9 13-9t13 9v14"/><path d="M12 33V21q0-6 8-6t8 6v12"/><path d="M20 10V5"/><path d="M17 6Q20 1.6 23 6"/><path d="M4 33h32"/></svg></div>
           <p class="card-for"><span class="en">Shubho Bibaho</span><span class="bn">শুভ বিবাহ</span></p>
-          <h3 class="card-name"><span class="en">Sree Krishna Banquet Hall</span><span class="bn">শ্রীকৃষ্ণ ব্যাঙ্কোয়েট হল</span></h3>
+          <h3 class="card-name"><span class="en">Shri Krishna Banquet Hall</span><span class="bn">শ্রী কৃষ্ণ ব্যাঙ্কোয়েট হল</span></h3>
           <p class="card-sub"><span class="en">Kestopur, Kolkata</span><span class="bn">কেষ্টপুর, কলকাতা</span></p>
           <p class="card-note"><span class="en">About ten minutes from Basak Bari by car. Dinner follows the ceremony.</span><span class="bn">বসাক বাড়ি থেকে গাড়িতে প্রায় দশ মিনিট। অনুষ্ঠানের পরে নৈশভোজ।</span></p>
           <a class="btn-line" target="_blank" rel="noopener" href="https://maps.app.goo.gl/cppFfc9VWAQZmAPa7"><span class="en">Open in Maps</span><span class="bn">ম্যাপে দেখুন</span></a>
           <a class="venue-qr" target="_blank" rel="noopener" href="https://maps.app.goo.gl/cppFfc9VWAQZmAPa7">
-            <img src="assets/img/venue-qr.svg" width="120" height="120" loading="lazy" alt="QR code with directions to Sree Krishna Banquet Hall">
+            <img src="assets/img/venue-qr.svg?v=2" width="120" height="120" loading="lazy" alt="QR code with directions to Shri Krishna Banquet Hall">
             <span class="qr-cap"><span class="en">Scan for directions</span><span class="bn">পথনির্দেশের জন্য স্ক্যান করুন</span></span>
           </a>
         </article>
@@ -1893,16 +1985,6 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
         <span class="en">December evenings in Kolkata turn cool. Carry something warm for the wedding night.</span>
         <span class="bn">ডিসেম্বরে কলকাতার সন্ধ্যা ঠান্ডা। বিয়ের রাতের জন্য গরম কিছু সঙ্গে রাখবেন।</span>
       </p>
-    </div>
-  </section>
-
-  <!-- PHOTO PAIR -->
-  <section style="padding:clamp(44px,8vw,72px) 0">
-    <div class="wrap">
-      <div class="pair rv">
-        <img src="assets/img/photo2.jpg" width="1100" height="1467" alt="Susmita and Rohit outside a wooden doorway" loading="lazy" decoding="async">
-        <img src="assets/img/photo1.jpg" width="900" height="1600" alt="Susmita and Rohit by the sea" loading="lazy" decoding="async">
-      </div>
     </div>
   </section>
 
@@ -1918,14 +2000,14 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
           <div class="card-ico"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><path d="M20 35V11"/><path d="M20 28Q10 25 8 14Q17 16 20 25"/><path d="M20 28Q30 25 32 14Q23 16 20 25"/><path d="M20 13Q16 9 20 4Q24 9 20 13Z"/></svg></div>
           <h3 class="card-name"><span class="en">Mehendi</span><span class="bn">মেহেন্দি</span></h3>
           <p class="card-time"><span class="en">9:00 AM onwards</span><span class="bn">সকাল ৯টা থেকে</span></p>
-          <p class="card-sub"><span class="en">Basak Bari, Debendranagar</span><span class="bn">বসাক বাড়ি, দেবেন্দ্রনগর</span></p>
+          <p class="card-sub"><span class="en">Basak Bari, Debendra Nagar</span><span class="bn">বসাক বাড়ি, দেবেন্দ্রনগর</span></p>
           <p class="card-note"><span class="en">Henna on the bride&rsquo;s hands, sweets, and a house full of noise.</span><span class="bn">কনের হাতে মেহেন্দি, মিষ্টিমুখ, আর হইহুল্লোড়ে ভরা বাড়ি।</span></p>
         </article>
         <article class="card rv" style="--d:.22s">
           <div class="card-ico"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M15 28V9l14-3v18"/><ellipse cx="11" cy="29" rx="4" ry="3"/><ellipse cx="25" cy="26" rx="4" ry="3"/><path d="M15 14l14-3"/></svg></div>
           <h3 class="card-name"><span class="en">Sangeet</span><span class="bn">সঙ্গীত</span></h3>
           <p class="card-time"><span class="en">5:00 PM onwards</span><span class="bn">বিকেল ৫টা থেকে</span></p>
-          <p class="card-sub"><span class="en">Basak Bari, Debendranagar</span><span class="bn">বসাক বাড়ি, দেবেন্দ্রনগর</span></p>
+          <p class="card-sub"><span class="en">Basak Bari, Debendra Nagar</span><span class="bn">বসাক বাড়ি, দেবেন্দ্রনগর</span></p>
           <p class="card-note"><span class="en">An evening of song and dance, and everyone made to perform.</span><span class="bn">গান আর নাচের সন্ধ্যা, আর সকলকেই কিছু না কিছু করতে হবে।</span></p>
         </article>
       </div>
@@ -1936,46 +2018,56 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       <div class="cards">
         <article class="card rv" style="--d:.14s">
           <div class="card-ico"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"><circle cx="20" cy="20" r="5.5"/><path d="M20 7V2M20 38v-5M7 20H2M38 20h-5M10.8 10.8L7.3 7.3M32.7 32.7l-3.5-3.5M29.2 10.8l3.5-3.5M10.8 29.2l-3.5 3.5"/><circle cx="20" cy="20" r="11" stroke-dasharray="2 5"/></svg></div>
-          <h3 class="card-name"><span class="en">Gaye Holud</span><span class="bn">গায়ে হলুদ</span></h3>
+          <h3 class="card-name"><span class="en">Haldi</span><span class="bn">গায়ে হলুদ</span></h3>
           <p class="card-time"><span class="en">9:00 AM onwards</span><span class="bn">সকাল ৯টা থেকে</span></p>
-          <p class="card-sub"><span class="en">Basak Bari, Debendranagar</span><span class="bn">বসাক বাড়ি, দেবেন্দ্রনগর</span></p>
+          <p class="card-sub"><span class="en">Basak Bari, Debendra Nagar</span><span class="bn">বসাক বাড়ি, দেবেন্দ্রনগর</span></p>
           <p class="card-note"><span class="en">Turmeric, laughter, and the old blessings of a Bengali morning.</span><span class="bn">হলুদ, হাসি, আর বাঙালি সকালের চিরচেনা আশীর্বাদ।</span></p>
         </article>
         <article class="card rv" style="--d:.22s">
           <div class="card-ico"><svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"><path d="M7 33V19q0-9 13-9t13 9v14"/><path d="M13 33V21q0-6 7-6t7 6v12"/><path d="M20 10V4"/><path d="M17 5.4Q20 1 23 5.4"/><path d="M20 19q-3.5 3.5 0 7 3.5-3.5 0-7z"/><path d="M4 33h32"/></svg></div>
           <h3 class="card-name"><span class="en">Shubho Bibaho</span><span class="bn">শুভ বিবাহ</span></h3>
           <p class="card-time"><span class="en">6:00 PM onwards</span><span class="bn">সন্ধ্যা ৬টা থেকে</span></p>
-          <p class="card-sub"><span class="en">Sree Krishna Banquet Hall, Kestopur</span><span class="bn">শ্রীকৃষ্ণ ব্যাঙ্কোয়েট হল, কেষ্টপুর</span></p>
-          <p class="card-note"><span class="en">The wedding, at the auspicious hour. Dinner follows.</span><span class="bn">শুভ লগ্নে বিবাহ। এরপর নৈশভোজ।</span></p>
+          <p class="card-sub"><span class="en">Shri Krishna Banquet Hall, Kestopur</span><span class="bn">শ্রী কৃষ্ণ ব্যাঙ্কোয়েট হল, কেষ্টপুর</span></p>
+          <p class="card-note"><span class="en">The wedding, at the auspicious hour, followed by the dinner party.</span><span class="bn">শুভ লগ্নে বিবাহ। এরপর নৈশভোজের আসর।</span></p>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- FILM 2 -->
-  <section style="padding-top:clamp(44px,8vw,72px)">
-    <div class="film rv">
-      <video data-autoloop muted loop playsinline preload="none" disableremoteplayback poster="assets/video/film2-poster.jpg" width="848" height="478" aria-label="A short silent clip of Susmita and Rohit"></video>
-    </div>
-    <p class="film-cap rv" style="--d:.1s"><span class="en">And now, to the two of us</span><span class="bn">আর এখন, আমাদের দুজনের কথা</span></p>
-  </section>
+  <div class="garad" aria-hidden="true"></div>
 
-  <!-- GALLERY -->
+  <!-- THE FORMAL INVITATION (nimantran, from the printed card) -->
   <section class="band">
     <div class="wrap">
-      <p class="kicker rv"><span class="en">Us</span><span class="bn">আমরা</span></p>
-      <h2 class="h2 rv" style="--d:.06s"><span class="en">A few moments on the <em>way here</em>.</span><span class="bn">এই পথ চলার <em>কিছু মুহূর্ত</em>।</span></h2>
-      <div class="gal rv" style="--d:.12s">
-        <img src="assets/img/photo3.jpg" width="1100" height="1650" alt="Susmita and Rohit holding hands by the sea" loading="lazy" decoding="async">
-        <img src="assets/img/photo2.jpg" width="1100" height="1467" alt="Susmita and Rohit outside a wooden doorway" loading="lazy" decoding="async">
-        <img src="assets/img/photo1.jpg" width="900" height="1600" alt="Susmita and Rohit by the sea" loading="lazy" decoding="async">
-        <video class="span2" data-autoloop muted loop playsinline preload="none" disableremoteplayback poster="assets/video/film1-poster.jpg" width="848" height="478" aria-label="A short silent clip of Susmita and Rohit"></video>
-        <video class="span2" data-autoloop muted loop playsinline preload="none" disableremoteplayback poster="assets/video/film2-poster.jpg" width="848" height="478" aria-label="A short silent clip of Susmita and Rohit"></video>
+      <p class="kicker rv"><span class="en">॥ Shree Shree Prajapataye Namah ॥</span><span class="bn">॥ শ্রী শ্রী প্রজাপতয়ে নমঃ ॥</span></p>
+      <h2 class="h2 rv" style="--d:.06s"><span class="en">The formal <em>invitation</em></span><span class="bn"><em>নিমন্ত্রণ</em></span></h2>
+      <div class="letter rv" style="--d:.12s">
+        <p class="letter-salut">
+          <span class="en">With all humility, Sir / Madam,</span>
+          <span class="bn">সবিনয় নিবেদন, মহাশয় / মহাশয়া,</span>
+        </p>
+        <p>
+          <span class="en">By the grace of Prajapati himself, at this auspicious and blessed hour, and with the sacred mantra &ldquo;sadrisham hridayam samam hridayam tava&rdquo; as our witness, the wedding of Kalyaniya Susmita Basak, the younger daughter of Sri Ratan Kumar Basak and Smt. Suchitra Basak, to Kalyaniya Rohit Mukherjee, the only son of Sri Subhankar Mukherjee and Smt. Jaishree Mukherjee, will be solemnised on Saturday evening, the 19th of Agrahayan 1433 - 5 December 2026.</span>
+          <span class="bn">প্রজাপতি স্বয়ং আশীর্বাদে মঙ্গলময় ও মাঙ্গলিক এই শুভ মুহূর্তে &ldquo;সদৃশং হৃদয়ং সমং হৃদয়ং তব&rdquo; এই পবিত্র মন্ত্রকে সাক্ষী রেখে আগামী ১৯শে অগ্রহায়ণ ১৪৩৩ (ইং ৫ই ডিসেম্বর ২০২৬), শনিবার সন্ধ্যায় শ্রী রতন কুমার বসাক ও শ্রীমতী সুচিত্রা বসাকের কনিষ্ঠা কন্যা কল্যাণীয়া সুস্মিতা বসাকের সহিত শ্রী শুভঙ্কর মুখার্জী ও শ্রীমতী জয়শ্রী মুখার্জীর একমাত্র পুত্র কল্যাণীয় রোহিত মুখার্জীর শুভ পরিণয় অনুষ্ঠান সম্পন্ন হবে।</span>
+        </p>
+        <p>
+          <span class="en">On this happy occasion we warmly invite you, on that day, to the wedding assembly at &ldquo;Shri Krishna Banquet Hall&rdquo;, Kestopur, Kolkata. May your presence and your heartfelt blessings make this joyous occasion complete and auspicious - that is our earnest wish.</span>
+          <span class="bn">এই শুভ উপলক্ষে উক্ত দিনে &ldquo;শ্রী কৃষ্ণ ব্যাঙ্কোয়েট হল&rdquo;, কেষ্টপুর, কলকাতা-য় অনুষ্ঠিত বিবাহ আসরে আপনাকে সাদর আমন্ত্রণ জানাই। আপনার শুভাগমন ও আন্তরিক আশীর্বাদে আমাদের এই আনন্দময় অনুষ্ঠান সার্থক ও মঙ্গলময় হয়ে উঠুক, এই আমাদের একান্ত কামনা।</span>
+        </p>
+        <p class="letter-plea">
+          <span class="en">You are sincerely requested to attend, together with your family.</span>
+          <span class="bn">পত্নীসহ নিমন্ত্রণের আন্তরিক প্রার্থনা।</span>
+        </p>
+        <div class="letter-sign">
+          <p class="letter-lab"><span class="en">Yours sincerely</span><span class="bn">বিনীত</span></p>
+          <p class="letter-nm">
+            <span class="en">Sri Ratan Kumar Basak<br>Smt. Suchitra Basak<br>Sri Shibir Basak</span>
+            <span class="bn">শ্রী রতন কুমার বসাক<br>শ্রীমতী সুচিত্রা বসাক<br>শ্রী শিবির বসাক</span>
+          </p>
+        </div>
       </div>
     </div>
   </section>
-
-  <div class="garad" aria-hidden="true"></div>
 
   <!-- CLOSING -->
   <section class="closing">
@@ -1991,8 +2083,8 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       </p>
       <p class="closing-hash rv" style="--d:.14s"><span class="hash">#</span>SuRo</p>
       <p class="closing-foot rv" style="--d:.2s">
-        <span class="en">With love and respect &middot; The Basak &amp; Mukherjee Families</span>
-        <span class="bn">ভালোবাসা ও শ্রদ্ধা সহ &middot; বসাক ও মুখার্জী পরিবার</span>
+        <span class="en">With love and respect &middot; The Basak Family</span>
+        <span class="bn">ভালোবাসা ও শ্রদ্ধা সহ &middot; বসাক পরিবার</span>
       </p>
     </div>
   </section>
@@ -2066,6 +2158,7 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     each('[data-mode-btn]',function(b){b.setAttribute('title',mode);b.setAttribute('aria-label',mode)});
     var lang=bn?'View in English':'বাংলায় দেখুন / Switch to Bengali';
     each('[data-lang-btn]',function(b){b.setAttribute('title',lang);b.setAttribute('aria-label',lang)});
+    if(window.__paintSound)window.__paintSound();
   }
   function applyMode(){
     var dark=root.getAttribute('data-theme')==='dark';
@@ -2196,15 +2289,85 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     setTimeout(function(){ink.remove()},650);
   });
 
+  /* ---------- the song ----------
+     Kicked off inside the #SuRo click handler. Browsers only allow audio that
+     a user gesture asked for, and the call has to happen in the handler itself
+     - starting it from a later setTimeout is treated as unprompted and blocked.
+     It still returns a promise that can reject (silent mode on iOS, a data
+     saver, an autoplay block), so nothing downstream may depend on it. */
+  var song=document.getElementById('song'),
+      soundBtn=document.getElementById('soundBtn'),
+      TARGET_VOL=0.55, fadeTimer=null, songOn=true;
+
+  function fadeTo(to,ms){
+    clearInterval(fadeTimer);
+    var from=song.volume, steps=Math.max(1,Math.round(ms/50)), i=0;
+    fadeTimer=setInterval(function(){
+      i++;
+      var v=from+(to-from)*(i/steps);
+      song.volume=Math.min(1,Math.max(0,v));
+      if(i>=steps){
+        clearInterval(fadeTimer);
+        if(to===0)song.pause();
+      }
+    },50);
+  }
+
+  function paintSound(){
+    soundBtn.classList.toggle('is-on',songOn);
+    soundBtn.classList.toggle('is-off',!songOn);
+    soundBtn.setAttribute('aria-pressed',songOn?'true':'false');
+    var t=songOn?(root.getAttribute('data-lang')==='bn'?'গান বন্ধ করুন':'Turn the music off')
+                :(root.getAttribute('data-lang')==='bn'?'গান চালু করুন':'Turn the music on');
+    soundBtn.setAttribute('title',t);
+    soundBtn.setAttribute('aria-label',t);
+  }
+
+  function startSong(){
+    song.volume=0;
+    var pr=song.play();
+    if(pr&&pr.catch)pr.catch(function(){
+      /* blocked - the toggle is left showing "off" so a tap can start it */
+      songOn=false;paintSound();
+    });
+    fadeTo(TARGET_VOL,1800);
+  }
+
+  soundBtn.addEventListener('click',function(){
+    songOn=!songOn;
+    paintSound();
+    save('suro-song',songOn?'on':'off');
+    if(songOn){
+      var pr=song.play();
+      if(pr&&pr.catch)pr.catch(function(){songOn=false;paintSound()});
+      fadeTo(TARGET_VOL,900);
+    }else{
+      fadeTo(0,700);
+    }
+  });
+
+  /* a returning guest who turned it off should not be given it again */
+  try{ if(localStorage.getItem('suro-song')==='off')songOn=false; }catch(e){}
+  window.__paintSound=paintSound;
+  paintSound();
+
+  /* Leaving the tab should not leave music playing behind it. */
+  document.addEventListener('visibilitychange',function(){
+    if(!started||!songOn)return;
+    if(document.hidden){clearInterval(fadeTimer);song.pause()}
+    else{var pr=song.play();if(pr&&pr.catch)pr.catch(function(){});}
+  });
+
   document.getElementById('startBtn').addEventListener('click',function(){
     if(started)return;
     started=true;
+    if(songOn)startSong();
     intro.classList.add('leaving');
     veil.classList.add('on');
     if(reduce){
       setTimeout(function(){
         invite.classList.add('on'); window.scrollTo(0,0);
-        veil.classList.remove('on'); observeAll();
+        veil.classList.add('done'); observeAll();
       },300);
       return;
     }
@@ -2216,7 +2379,7 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       window.scrollTo(0,0);
       observeAll();
     },1350);
-    setTimeout(function(){ veil.classList.remove('on') },2800);
+    setTimeout(function(){ veil.classList.add('done') },2800);
   });
 
   /* ---------- scroll reveal ---------- */
@@ -2237,44 +2400,6 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       },{rootMargin:'0px 0px -6% 0px',threshold:.1});
     }
     Array.prototype.forEach.call(items,function(el){io.observe(el)});
-  }
-
-  /* ---------- videos ----------
-     The mp4 files carry no audio track at all, so there is nothing to unmute.
-     They autoplay muted when scrolled into view and pause when they leave. */
-  var vids=document.querySelectorAll('video[data-autoloop]');
-  Array.prototype.forEach.call(vids,function(v){
-    v.muted=true; v.defaultMuted=true; v.volume=0;
-    v.setAttribute('muted','');
-    v.dataset.src=v.getAttribute('poster').replace('-poster.jpg','.mp4');
-    v.addEventListener('volumechange',function(){
-      if(!v.muted||v.volume>0){v.muted=true;v.volume=0}
-    });
-  });
-
-  function attach(v){
-    if(v.querySelector('source'))return;
-    var s=document.createElement('source');
-    s.src=v.dataset.src; s.type='video/mp4';
-    v.appendChild(s); v.load();
-  }
-
-  if('IntersectionObserver' in window){
-    var vio=new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        var v=e.target;
-        if(e.isIntersecting){
-          attach(v);
-          var p=v.play();
-          if(p&&p.catch)p.catch(function(){});
-        }else{
-          v.pause();
-        }
-      });
-    },{threshold:.35});
-    Array.prototype.forEach.call(vids,function(v){vio.observe(v)});
-  }else{
-    Array.prototype.forEach.call(vids,function(v){attach(v);v.setAttribute('controls','')});
   }
 
   /* ---------- intro background: sindoor dust + jaba blooms ---------- */
