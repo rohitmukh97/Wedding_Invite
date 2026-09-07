@@ -1938,8 +1938,8 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
           <span class="bn">পিতা : শ্রী রতন কুমার বসাক<br>মাতা : শ্রীমতী সুচিত্রা বসাক</span>
         </p>
         <p class="fam-sib">
-          <span class="en">Sister of Sri Shibir Basak</span>
-          <span class="bn">ভ্রাতা : শ্রী শিবির বসাক</span>
+          <span class="en">Sister of Sri Shibir Basak<br>Sister-in-law of Smt. Reshmi De<br>Aunt of Rishiv De Basak (Simba)</span>
+          <span class="bn">ভ্রাতা : শ্রী শিবির বসাক<br>ভ্রাতৃবধূ : শ্রীমতী রেশমি দে<br>ভ্রাতুষ্পুত্র : ঋষিভ দে বসাক (সিম্বা)</span>
         </p>
 
         <p class="fam-join"><span class="en">with</span><span class="bn">সহিত</span></p>
@@ -2574,8 +2574,22 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     vizLoop();
   }
 
+  /* Once the song has been routed through Web Audio - which happens the first
+     time the visuals are switched on - its sound ONLY reaches the speakers
+     through that graph. Browsers suspend an AudioContext whenever the tab goes
+     away, and a suspended context means the element plays on with nothing
+     audible. So every place the song starts has to wake it, whether the visuals
+     are on or off. Tying this to the visuals was the bug: turn them on once,
+     switch tabs, and the music came back silent. */
+  function wakeAudio(){
+    if(viz.ctx&&viz.ctx.state==='suspended'){
+      var r=viz.ctx.resume(); if(r&&r.catch)r.catch(function(){});
+    }
+  }
+
   function startSong(){
     song.volume=0;
+    wakeAudio();
     var pr=song.play();
     if(pr&&pr.catch)pr.catch(function(){
       /* blocked - the toggle is left showing "off" so a tap can start it */
@@ -2590,6 +2604,7 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     paintSound();
     save('suro-song',songOn?'on':'off');
     if(songOn){
+      wakeAudio();
       var pr=song.play();
       if(pr&&pr.catch)pr.catch(function(){songOn=false;paintSound()});
       fadeTo(TARGET_VOL,900);
@@ -2613,8 +2628,9 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       cancelAnimationFrame(viz.raf);            /* no point animating offscreen */
       if(waveWrap)waveWrap.classList.remove('lit');
     }else{
+      wakeAudio();
       var pr=song.play();if(pr&&pr.catch)pr.catch(function(){});
-      if(viz.an){viz.quiet=0;cancelAnimationFrame(viz.raf);vizLoop()}
+      if(vizOn&&viz.an){viz.quiet=0;cancelAnimationFrame(viz.raf);vizLoop()}
     }
   });
 
