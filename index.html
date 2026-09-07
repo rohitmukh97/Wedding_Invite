@@ -117,43 +117,27 @@ html:not([data-palette="mauve"]) body{
   box-shadow:inset 0 1px 0 var(--gold-l),inset 0 -1px 0 var(--gold-l);
 }
 
-/* ---------- the ribbon listens to the song ----------
-   Two layers screen-blended over the woven band: the rose one rides the bass,
-   the gold one the higher notes, so the colour shifts as the music moves.
-   Both draw on the theme variables, so they follow the palette and light/dark
-   without knowing anything about either. JS only writes --viz-lo / --viz-hi. */
-#ribbon{--viz-lo:0;--viz-hi:0}
-.garad-viz{position:absolute;inset:0;pointer-events:none}
-.garad-viz i{position:absolute;display:block}
-.garad-viz .lo,.garad-viz .hi{inset:-1px 0;mix-blend-mode:screen}
-.garad-viz .lo{
-  background:radial-gradient(ellipse 64% 260% at 50% 50%,var(--accent),transparent 72%);
-  opacity:calc(var(--viz-lo) * .88);
+/* ---------- the song, drawn under the ribbon ----------
+   The ribbon itself stays perfectly still - it is a woven band and it looked
+   wrong made to dance. The music lives in a soft glow just beneath it instead:
+   a slow, blurred curve that swells and settles, closer to candlelight on the
+   cloth than to an equaliser. */
+.wave-wrap{
+  position:relative;height:0;margin-top:-2px;pointer-events:none;overflow:hidden;
+  opacity:0;
+  transition:height .78s cubic-bezier(.32,.9,.28,1),opacity .62s ease;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);
 }
-.garad-viz .hi{
-  background:linear-gradient(90deg,transparent 3%,var(--gold-l) 27%,
-    var(--gold) 50%,var(--gold-l) 73%,transparent 97%);
-  opacity:calc(var(--viz-hi) * .72);
-}
-/* the bloom spills a little above and below so the band seems to breathe */
-.garad-viz .bloom{
-  left:0;right:0;top:-7px;bottom:-7px;
-  background:radial-gradient(ellipse 72% 190% at 50% 50%,var(--glow),transparent 70%);
-  opacity:calc(var(--viz-lo) * .95);
-}
+/* .open is the toggle - the strip grows out from under the ribbon.
+   .lit is the music - it fades the glow in only once there is sound. */
+.wave-wrap.open{height:50px}
+.wave-wrap.open.lit{opacity:1}
+.wave-wrap.open:not(.lit){opacity:.35}
+.wave-wrap canvas{display:block;width:100%;height:50px}
+@media(prefers-reduced-motion:reduce){.wave-wrap{display:none}}
 
-/* Nothing to listen to - the song is off, or iOS is muted by the ring switch.
-   A slow travelling shimmer, so a still ribbon reads as intended, not broken. */
-html.viz-idle .garad-viz .hi{
-  opacity:.17;
-  background:linear-gradient(90deg,transparent 36%,var(--gold-l) 50%,transparent 64%);
-  background-size:240% 100%;
-  animation:vizIdle 7s linear infinite;
-}
-@keyframes vizIdle{from{background-position:130% 0}to{background-position:-130% 0}}
-@media(prefers-reduced-motion:reduce){
-  html.viz-idle .garad-viz .hi{animation:none;opacity:.12}
-}
+
 .garad::after{
   content:"";position:absolute;inset:0;
   background:repeating-linear-gradient(90deg,
@@ -235,6 +219,20 @@ html[data-lang="bn"] body{font-family:'Hind Siliguri',sans-serif;line-height:1.9
 [data-palette="mauve"] .ctl-palette .ico-rosette{opacity:1;transform:none}
 
 /* day / night crossfade, driven purely by the theme attribute */
+/* ---------- the visuals toggle ----------
+   One mark, not two: the wave relaxes into a straight line rather than being
+   crossed out, which reads as "settled" instead of "broken". */
+.ctl-viz svg{position:absolute;overflow:visible}
+.ctl-viz .v-wave,.ctl-viz .v-flat{
+  transition:opacity .5s ease,transform .6s cubic-bezier(.32,.9,.28,1);
+  transform-origin:12px 12px;
+}
+.ctl-viz .v-flat{opacity:1}
+.ctl-viz .v-wave{opacity:0;transform:scaleY(.28)}
+.ctl-viz.is-on .v-flat{opacity:0;transform:scaleY(.4)}
+.ctl-viz.is-on .v-wave{opacity:1;transform:none}
+.ctl-viz.is-on{color:var(--gold);border-color:var(--gold-l)}
+
 /* ---------- the sound toggle ----------
    One icon, not two: the waves fade out and the cross fades in, so the button
    never changes size or jumps. */
@@ -1854,12 +1852,17 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
           <path class="mute-x" d="M15.6 9.8l4.6 4.4M20.2 9.8l-4.6 4.4"/>
         </svg>
       </button>
+      <button class="ctl ctl-viz is-off" id="vizBtn" type="button" title="Show the music" aria-label="Show the music" aria-pressed="false">
+        <svg class="ico-viz" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+          <path class="v-wave" d="M2.5 12c2.4 0 2.4-5.4 4.8-5.4S9.7 17.4 12 17.4s2.4-8.8 4.8-8.8 2.3 3.4 4.7 3.4"/>
+          <path class="v-flat" d="M2.5 12h19"/>
+        </svg>
+      </button>
     </div>
   </div>
 
-  <div class="garad" id="ribbon" aria-hidden="true">
-    <div class="garad-viz"><i class="bloom"></i><i class="lo"></i><i class="hi"></i></div>
-  </div>
+  <div class="garad" aria-hidden="true"></div>
+  <div class="wave-wrap" id="waveWrap" aria-hidden="true"><canvas id="wave"></canvas></div>
 
   <!-- HERO -->
   <section class="hero">
@@ -2206,6 +2209,7 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     var lang=bn?'View in English':'বাংলায় দেখুন / Switch to Bengali';
     each('[data-lang-btn]',function(b){b.setAttribute('title',lang);b.setAttribute('aria-label',lang)});
     if(window.__paintSound)window.__paintSound();
+    if(window.__paintViz)window.__paintViz();
   }
   function applyMode(){
     var dark=root.getAttribute('data-theme')==='dark';
@@ -2378,51 +2382,172 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
         the graph - miss the connect to destination and the song goes silent
         while everything still looks correct. */
   var viz={ctx:null,an:null,bins:null,raf:0,quiet:0};
-  var ribbon=document.getElementById('ribbon');
 
-  function vizSet(lo,hi){
-    if(!ribbon)return;
-    ribbon.style.setProperty('--viz-lo',lo.toFixed(3));
-    ribbon.style.setProperty('--viz-hi',hi.toFixed(3));
+  var waveWrap=document.getElementById('waveWrap'),
+      waveCv=document.getElementById('wave'), waveCx=null,
+      BANDS=9, level=[], target=[];
+  for(var q=0;q<BANDS;q++){level.push(0);target.push(0)}
+
+  function waveSize(){
+    if(!waveCv)return;
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    var r=waveCv.getBoundingClientRect();
+    if(!r.width)return;
+    waveCv.width=Math.round(r.width*dpr);
+    waveCv.height=Math.round(r.height*dpr);
+    waveCx=waveCv.getContext('2d');
+    waveCx.setTransform(dpr,0,0,dpr,0,0);
+    viz.w=r.width; viz.h=r.height;
   }
+  window.addEventListener('resize',function(){clearTimeout(viz.rs);viz.rs=setTimeout(waveSize,180)});
 
-  /* auto-gain: the floor creeps up, the ceiling creeps down, both snap
-     outward instantly when the music exceeds them */
+  /* auto-gain: the floor creeps up, the ceiling creeps down, and both snap
+     outward the instant the music passes them. Measured on this song the bass
+     only travels between about 0.79 and 0.91 - a narrow band sitting high - so
+     a fixed gain just pins it flat. This stretches whatever range is actually
+     playing across the full swing. */
   function vizNorm(k,v){
     var f=k+'F',c=k+'C';
     viz[f]=viz[f]===undefined?v:Math.min(v,viz[f]+0.0012);
     viz[c]=viz[c]===undefined?v:Math.max(v,viz[c]-0.0012);
     var span=viz[c]-viz[f];
-    if(span<0.03)return 0.18;                 /* too flat to read - hold steady */
+    if(span<0.03)return 0.2;
     var n=(v-viz[f])/span;
-    n=n<0?0:n>1?1:n;
-    return 0.14+n*0.86;                       /* keep a soft base glow */
+    return n<0?0:n>1?1:n;
   }
 
-  function vizLoop(){
+  /* a hand-rolled ease so the curve settles rather than twitches at 60fps */
+  function drawWave(t){
+    if(!waveCx)return;
+    var w=viz.w,h=viz.h,mid=h*0.72,i,x,y;
+    waveCx.clearRect(0,0,w,h);
+    var peak=0;
+    for(i=0;i<BANDS;i++){
+      level[i]+=(target[i]-level[i])*0.14;
+      if(level[i]>peak)peak=level[i];
+    }
+    /* The excursion is normalised to 0..1 first and the amplitude is then set
+       to exactly the room available, so a loud passage can reach the top of the
+       strip but never punch into the ribbon or clip against the edge. The 11px
+       held back is wider than the 6px bloom, so even the halo stays clear -
+       at 5px the glow was reaching the ribbon on desktop, where the curve
+       peaks higher across a wider strip. */
+    var amp=mid-11;
+    var pts=[];
+    for(i=0;i<BANDS;i++){
+      x=(i/(BANDS-1))*w;
+      /* two slow sines out of step keep it breathing between beats rather
+         than snapping rigid when a bar holds */
+      var drift=Math.sin(t/1250+i*1.15)*0.22+Math.sin(t/2100+i*1.9)*0.14;
+      var e=level[i]*0.80+drift*(0.22+level[i]*0.42)+0.09;
+      e=e<0?0:e>1?1:e;
+      y=mid-e*amp;
+      pts.push([x,y]);
+    }
+    function curve(off,alpha,width,col){
+      waveCx.beginPath();
+      waveCx.moveTo(pts[0][0],pts[0][1]+off);
+      for(i=0;i<pts.length-1;i++){
+        var a=pts[i],b2=pts[i+1];
+        var cx=(a[0]+b2[0])/2;
+        waveCx.bezierCurveTo(cx,a[1]+off,cx,b2[1]+off,b2[0],b2[1]+off);
+      }
+      waveCx.globalAlpha=alpha;
+      waveCx.lineWidth=width;
+      waveCx.strokeStyle=col;
+      waveCx.lineCap='round';
+      waveCx.stroke();
+    }
+    var gold=viz.gold||'#e6c273', rose=viz.rose||'#e8807b';
+    /* three passes: a wide soft bloom, a mid body, a fine bright core */
+    waveCx.filter='blur(6px)';  curve(0,0.30*(0.35+peak),9,rose);
+    waveCx.filter='blur(2.5px)';curve(0,0.42*(0.4+peak),4,gold);
+    waveCx.filter='none';       curve(0,0.55*(0.35+peak),1.25,gold);
+    /* its reflection, fainter, so the glow reads as light on cloth */
+    waveCx.filter='blur(4px)';
+    waveCx.save(); waveCx.translate(0,mid*2); waveCx.scale(1,-1);
+    curve(0,0.13*(0.3+peak),5,rose);
+    waveCx.restore();
+    waveCx.filter='none'; waveCx.globalAlpha=1;
+  }
+
+  function vizLoop(ts){
     viz.raf=requestAnimationFrame(vizLoop);
     if(!viz.an)return;
     viz.an.getByteFrequencyData(viz.bins);
     var b=viz.bins,i,sum=0;
     for(i=0;i<b.length;i++)sum+=b[i];
     /* A silent stretch means the song is off, or iOS is muted by the ring
-       switch - the analyser reads zeros either way and cannot tell them
-       apart. Roughly half a second of nothing hands over to the shimmer. */
+       switch - the analyser reads zeros either way and cannot tell the two
+       apart. Roughly half a second of nothing fades the glow out. */
     if(song.paused||sum===0){
-      if(++viz.quiet>30){root.classList.add('viz-idle');vizSet(0,0);return}
-    }else{ viz.quiet=0; root.classList.remove('viz-idle'); }
-    var lo=(b[1]+b[2]+b[3])/765;
-    var hi=(b[9]+b[13]+b[17]+b[21])/1020;
-    /* Measured over this song, the bass only travels between about 0.79 and
-       0.91 - a narrow band sitting high, so a fixed gain just clips it flat.
-       These envelopes track the floor and ceiling of whatever is actually
-       playing and stretch that range across the full pulse, which keeps the
-       movement visible in quiet passages as well as loud ones. */
-    vizSet(vizNorm('lo',lo),vizNorm('hi',hi));
+      if(++viz.quiet>30){
+        if(waveWrap)waveWrap.classList.remove('lit');
+        for(i=0;i<BANDS;i++)target[i]=0;
+      }
+    }else{
+      viz.quiet=0;
+      if(waveWrap&&!waveWrap.classList.contains('lit'))waveWrap.classList.add('lit');
+      /* nine bands spread across the audible range, low notes on the outside
+         so the curve swells from the middle */
+        var pick=[1,2,4,6,8,11,14,18,24];
+      for(i=0;i<BANDS;i++){
+        var v=vizNorm('b'+i,b[pick[i]]/255);
+        var k=Math.abs(i-(BANDS-1)/2)/((BANDS-1)/2);
+        target[i]=v*(1-k*0.28);
+      }
+    }
+    drawWave(ts||0);
+  }
+
+  /* Off by default, so the song is NOT routed through Web Audio until it is
+     asked for. That matters: the moment an element is tapped for analysis its
+     sound only leaves through the graph, and that is a needless risk to take
+     with the music for a guest who never turns the visuals on. */
+  var vizOn=false, vizBtn=document.getElementById('vizBtn');
+
+  function paintViz(){
+    if(!vizBtn)return;
+    vizBtn.classList.toggle('is-on',vizOn);
+    vizBtn.classList.toggle('is-off',!vizOn);
+    vizBtn.setAttribute('aria-pressed',vizOn?'true':'false');
+    var bn=root.getAttribute('data-lang')==='bn';
+    var t=vizOn?(bn?'সুরের ঢেউ লুকান':'Hide the music')
+               :(bn?'সুরের ঢেউ দেখুন':'Show the music');
+    vizBtn.setAttribute('title',t);
+    vizBtn.setAttribute('aria-label',t);
+    if(waveWrap)waveWrap.classList.toggle('open',vizOn);
+  }
+
+  function vizStop(){
+    cancelAnimationFrame(viz.raf); viz.raf=0;
+    if(waveWrap)waveWrap.classList.remove('lit');
+    for(var vi=0;vi<BANDS;vi++){target[vi]=0;level[vi]=0}
+    if(waveCx)waveCx.clearRect(0,0,viz.w||0,viz.h||0);
+  }
+
+  if(vizBtn){
+    vizBtn.addEventListener('click',function(){
+      vizOn=!vizOn;
+      paintViz();
+      save('suro-viz',vizOn?'on':'off');
+      if(vizOn){startViz()}
+      /* let the strip finish collapsing before the canvas is wiped, so it
+         closes gracefully rather than emptying and then shrinking */
+      else{setTimeout(vizStop,820)}
+    });
+    try{ if(localStorage.getItem('suro-viz')==='on')vizOn=true; }catch(e){}
+    paintViz();
   }
 
   function startViz(){
-    if(viz.ctx||reduce||!ribbon)return;
+    if(!vizOn||reduce||!waveCv)return;
+    if(viz.ctx){                        /* already routed - just resume drawing */
+      if(viz.ctx.state==='suspended')viz.ctx.resume();
+      waveSize();
+      cancelAnimationFrame(viz.raf);vizLoop();
+      return;
+    }
     var AC=window.AudioContext||window.webkitAudioContext;
     if(!AC)return;
     try{
@@ -2435,9 +2560,16 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       viz.bins=new Uint8Array(viz.an.frequencyBinCount);
     }catch(e){
       /* no visualiser rather than no music */
-      viz.ctx=null;viz.an=null;root.classList.add('viz-idle');return;
+      viz.ctx=null;viz.an=null;
+      if(waveWrap)waveWrap.remove();
+      return;
     }
     if(viz.ctx.state==='suspended'){var r=viz.ctx.resume();if(r&&r.catch)r.catch(function(){})}
+    /* the palette can change under us, so read the theme colours live */
+    var cs=getComputedStyle(root);
+    viz.gold=cs.getPropertyValue('--gold').trim()||'#e6c273';
+    viz.rose=cs.getPropertyValue('--accent').trim()||'#e8807b';
+    waveSize();
     cancelAnimationFrame(viz.raf);
     vizLoop();
   }
@@ -2462,7 +2594,6 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       if(pr&&pr.catch)pr.catch(function(){songOn=false;paintSound()});
       fadeTo(TARGET_VOL,900);
       startViz();
-      if(viz.ctx&&viz.ctx.state==='suspended')viz.ctx.resume();
     }else{
       fadeTo(0,700);
     }
@@ -2471,6 +2602,7 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
   /* a returning guest who turned it off should not be given it again */
   try{ if(localStorage.getItem('suro-song')==='off')songOn=false; }catch(e){}
   window.__paintSound=paintSound;
+  window.__paintViz=paintViz;
   paintSound();
 
   /* Leaving the tab should not leave music playing behind it. */
@@ -2479,7 +2611,7 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     if(document.hidden){
       clearInterval(fadeTimer);song.pause();
       cancelAnimationFrame(viz.raf);            /* no point animating offscreen */
-      root.classList.add('viz-idle');
+      if(waveWrap)waveWrap.classList.remove('lit');
     }else{
       var pr=song.play();if(pr&&pr.catch)pr.catch(function(){});
       if(viz.an){viz.quiet=0;cancelAnimationFrame(viz.raf);vizLoop()}
