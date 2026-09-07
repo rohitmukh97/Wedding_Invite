@@ -116,6 +116,44 @@ html:not([data-palette="mauve"]) body{
     linear-gradient(180deg,var(--band-a),var(--band-b) 45%,var(--band-a));
   box-shadow:inset 0 1px 0 var(--gold-l),inset 0 -1px 0 var(--gold-l);
 }
+
+/* ---------- the ribbon listens to the song ----------
+   Two layers screen-blended over the woven band: the rose one rides the bass,
+   the gold one the higher notes, so the colour shifts as the music moves.
+   Both draw on the theme variables, so they follow the palette and light/dark
+   without knowing anything about either. JS only writes --viz-lo / --viz-hi. */
+#ribbon{--viz-lo:0;--viz-hi:0}
+.garad-viz{position:absolute;inset:0;pointer-events:none}
+.garad-viz i{position:absolute;display:block}
+.garad-viz .lo,.garad-viz .hi{inset:-1px 0;mix-blend-mode:screen}
+.garad-viz .lo{
+  background:radial-gradient(ellipse 64% 260% at 50% 50%,var(--accent),transparent 72%);
+  opacity:calc(var(--viz-lo) * .88);
+}
+.garad-viz .hi{
+  background:linear-gradient(90deg,transparent 3%,var(--gold-l) 27%,
+    var(--gold) 50%,var(--gold-l) 73%,transparent 97%);
+  opacity:calc(var(--viz-hi) * .72);
+}
+/* the bloom spills a little above and below so the band seems to breathe */
+.garad-viz .bloom{
+  left:0;right:0;top:-7px;bottom:-7px;
+  background:radial-gradient(ellipse 72% 190% at 50% 50%,var(--glow),transparent 70%);
+  opacity:calc(var(--viz-lo) * .95);
+}
+
+/* Nothing to listen to - the song is off, or iOS is muted by the ring switch.
+   A slow travelling shimmer, so a still ribbon reads as intended, not broken. */
+html.viz-idle .garad-viz .hi{
+  opacity:.17;
+  background:linear-gradient(90deg,transparent 36%,var(--gold-l) 50%,transparent 64%);
+  background-size:240% 100%;
+  animation:vizIdle 7s linear infinite;
+}
+@keyframes vizIdle{from{background-position:130% 0}to{background-position:-130% 0}}
+@media(prefers-reduced-motion:reduce){
+  html.viz-idle .garad-viz .hi{animation:none;opacity:.12}
+}
 .garad::after{
   content:"";position:absolute;inset:0;
   background:repeating-linear-gradient(90deg,
@@ -1216,7 +1254,14 @@ html[data-lang="bn"] .h2{font-family:'Noto Serif Bengali',serif;font-weight:500;
 html[data-lang="bn"] .lede{font-family:'Hind Siliguri',sans-serif;font-size:16px}
 
 /* hero */
-.hero{text-align:center;padding-top:clamp(48px,9vw,86px)}
+/* The mandala behind the names is 132vw wide and spins, and a rotating square
+   sweeps a bounding box up to 1.41x its size - so it pushed the document wider
+   than the screen, by an amount that CHANGED as it turned. Android Chrome
+   reacts to a page wider than the viewport by zooming out and left-aligning it,
+   which is why the invitation could come up offset and only look right after a
+   reload. Clipping it to its own section keeps the page exactly viewport-wide.
+   The mark is decorative at 8.5% opacity, so nothing is lost by trimming it. */
+.hero{text-align:center;padding-top:clamp(48px,9vw,86px);overflow:hidden}
 /* Shubho Bibaho: the line that names the occasion, so it carries weight
    rather than sitting back like a caption */
 .hero-eyebrow{
@@ -1812,7 +1857,9 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     </div>
   </div>
 
-  <div class="garad" aria-hidden="true"></div>
+  <div class="garad" id="ribbon" aria-hidden="true">
+    <div class="garad-viz"><i class="bloom"></i><i class="lo"></i><i class="hi"></i></div>
+  </div>
 
   <!-- HERO -->
   <section class="hero">
@@ -2323,6 +2370,78 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
     soundBtn.setAttribute('aria-label',t);
   }
 
+  /* ---------- the ribbon visualiser ----------
+     An analyser tapped off the song. Two things matter here:
+     1. createMediaElementSource can only ever be called once for an element,
+        so it is guarded and never re-run.
+     2. Once the element is routed into Web Audio its sound ONLY leaves through
+        the graph - miss the connect to destination and the song goes silent
+        while everything still looks correct. */
+  var viz={ctx:null,an:null,bins:null,raf:0,quiet:0};
+  var ribbon=document.getElementById('ribbon');
+
+  function vizSet(lo,hi){
+    if(!ribbon)return;
+    ribbon.style.setProperty('--viz-lo',lo.toFixed(3));
+    ribbon.style.setProperty('--viz-hi',hi.toFixed(3));
+  }
+
+  /* auto-gain: the floor creeps up, the ceiling creeps down, both snap
+     outward instantly when the music exceeds them */
+  function vizNorm(k,v){
+    var f=k+'F',c=k+'C';
+    viz[f]=viz[f]===undefined?v:Math.min(v,viz[f]+0.0012);
+    viz[c]=viz[c]===undefined?v:Math.max(v,viz[c]-0.0012);
+    var span=viz[c]-viz[f];
+    if(span<0.03)return 0.18;                 /* too flat to read - hold steady */
+    var n=(v-viz[f])/span;
+    n=n<0?0:n>1?1:n;
+    return 0.14+n*0.86;                       /* keep a soft base glow */
+  }
+
+  function vizLoop(){
+    viz.raf=requestAnimationFrame(vizLoop);
+    if(!viz.an)return;
+    viz.an.getByteFrequencyData(viz.bins);
+    var b=viz.bins,i,sum=0;
+    for(i=0;i<b.length;i++)sum+=b[i];
+    /* A silent stretch means the song is off, or iOS is muted by the ring
+       switch - the analyser reads zeros either way and cannot tell them
+       apart. Roughly half a second of nothing hands over to the shimmer. */
+    if(song.paused||sum===0){
+      if(++viz.quiet>30){root.classList.add('viz-idle');vizSet(0,0);return}
+    }else{ viz.quiet=0; root.classList.remove('viz-idle'); }
+    var lo=(b[1]+b[2]+b[3])/765;
+    var hi=(b[9]+b[13]+b[17]+b[21])/1020;
+    /* Measured over this song, the bass only travels between about 0.79 and
+       0.91 - a narrow band sitting high, so a fixed gain just clips it flat.
+       These envelopes track the floor and ceiling of whatever is actually
+       playing and stretch that range across the full pulse, which keeps the
+       movement visible in quiet passages as well as loud ones. */
+    vizSet(vizNorm('lo',lo),vizNorm('hi',hi));
+  }
+
+  function startViz(){
+    if(viz.ctx||reduce||!ribbon)return;
+    var AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC)return;
+    try{
+      viz.ctx=new AC();
+      var src=viz.ctx.createMediaElementSource(song);
+      viz.an=viz.ctx.createAnalyser();
+      viz.an.fftSize=64;viz.an.smoothingTimeConstant=.78;
+      src.connect(viz.an);
+      viz.an.connect(viz.ctx.destination);
+      viz.bins=new Uint8Array(viz.an.frequencyBinCount);
+    }catch(e){
+      /* no visualiser rather than no music */
+      viz.ctx=null;viz.an=null;root.classList.add('viz-idle');return;
+    }
+    if(viz.ctx.state==='suspended'){var r=viz.ctx.resume();if(r&&r.catch)r.catch(function(){})}
+    cancelAnimationFrame(viz.raf);
+    vizLoop();
+  }
+
   function startSong(){
     song.volume=0;
     var pr=song.play();
@@ -2331,6 +2450,7 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       songOn=false;paintSound();
     });
     fadeTo(TARGET_VOL,1800);
+    startViz();
   }
 
   soundBtn.addEventListener('click',function(){
@@ -2341,6 +2461,8 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
       var pr=song.play();
       if(pr&&pr.catch)pr.catch(function(){songOn=false;paintSound()});
       fadeTo(TARGET_VOL,900);
+      startViz();
+      if(viz.ctx&&viz.ctx.state==='suspended')viz.ctx.resume();
     }else{
       fadeTo(0,700);
     }
@@ -2354,8 +2476,14 @@ html.lang-switching #invite{opacity:.04;filter:blur(3px)}
   /* Leaving the tab should not leave music playing behind it. */
   document.addEventListener('visibilitychange',function(){
     if(!started||!songOn)return;
-    if(document.hidden){clearInterval(fadeTimer);song.pause()}
-    else{var pr=song.play();if(pr&&pr.catch)pr.catch(function(){});}
+    if(document.hidden){
+      clearInterval(fadeTimer);song.pause();
+      cancelAnimationFrame(viz.raf);            /* no point animating offscreen */
+      root.classList.add('viz-idle');
+    }else{
+      var pr=song.play();if(pr&&pr.catch)pr.catch(function(){});
+      if(viz.an){viz.quiet=0;cancelAnimationFrame(viz.raf);vizLoop()}
+    }
   });
 
   document.getElementById('startBtn').addEventListener('click',function(){
